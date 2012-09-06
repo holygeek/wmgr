@@ -1,0 +1,28 @@
+#!/bin/sh
+# altj - Explanation goes here
+# Created: Tue Nov 25 11:06:22 MYT 2008
+# args=$(wmctrl -l|grep -v -- '-1'|tr -s ' '|cut -f 4- -d' '|
+# while read line; do
+# echo "'$(echo $line|sed -e 's/ / /g')'"\ "'wmctrl -a \"$line\"'"
+# done|tr '\n' '\n'|cat)
+#echo $args
+# ratmenu_opts="-style dreary -fg linen -bg black"
+# eval ratmenu $ratmenu_opts "$args"
+
+#echo -e "$args"|dmenu
+
+exclude=term\.
+currwin=`currwin`
+windowlist=`wmctrl -l|grep -v ' -1 '|cut -f 5- -d' '|grep -v $exclude`
+if [ -z "$windowlist" ]; then
+  exit
+fi
+nwindows=`echo "$windowlist"|wc -l`
+echo nwindows=$nwindows
+title=`echo "$windowlist"|dmenu -l $nwindows`
+if [ -n "$title" ]; then
+	#wmctrl -a "$title"
+	goto "$title"
+else
+  echo wmctrl -a $currwin
+fi

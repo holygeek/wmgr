@@ -1,0 +1,23 @@
+#!/bin/sh
+# cycle - cycle windows
+# Created: Mon Jan 19 17:55:33 MYT 2009
+
+# Usage: cycle <tmpfilename> <windowtitle>
+
+file_counter=/dev/shm/$1
+title="$2"
+
+if [ ! -f $file_counter ]; then
+  echo 0 > $file_counter
+fi
+index=`cat $file_counter`
+index=$(($index + 1))
+n_instances=`wmctrl -l|egrep "$title"|wc -l`
+if [ ! $index -lt $n_instances ]; then
+	index=0
+fi
+echo $index > $file_counter
+
+choose=$(($index + 1))
+window_id=`wmctrl -l|egrep "$title"|awk '{print $1}'|head -$choose|tail -1`
+wmctrl -i -a $window_id

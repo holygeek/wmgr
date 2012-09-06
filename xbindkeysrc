@@ -1,0 +1,129 @@
+###########################
+# xbindkeys configuration #
+###########################
+#
+# Version: 0.1.3
+#
+# If you edit this, do not forget to uncomment any lines that you change.
+# The pound(#) symbol may be used anywhere for comments.
+#
+# A list of keys is in /usr/include/X11/keysym.h and in
+# /usr/include/X11/keysymdef.h 
+# The XK_ is not needed. 
+#
+# List of modifier (on my keyboard): 
+#   Control, Shift, Mod1 (Alt), Mod2 (NumLock), 
+#   Mod3 (CapsLock), Alt, Mod5 (Scroll). 
+#
+# Another way to specifie a key is to use 'xev' and set the 
+# keycode with c:nnn or the modifier with m:nnn where nnn is 
+# the keycode or the state returned by xev 
+#
+# This file is created by xbindkey_config 
+# The structure is : 
+# # Remark 
+# "command" 
+# m:xxx + c:xxx 
+# Shift+... 
+
+#keystate_numlock = enable
+#keystate_scrolllock = enable
+#keystate_capslock = enable
+
+"xbindkeys_show"
+   control+shift + q
+
+"goto.or.error term.s"
+   Alt + s
+"goto.or.error term.a"
+   Alt + a
+#"goto.or.error term.l"
+#   Alt + l
+#"goto.or.error term.r"
+#   Alt + r
+"goto.or.error term.v"
+   Alt + v
+#raise hilite
+"goto.or.error term.h"
+   Alt + h
+
+"goto -f term.s"
+   Alt + Shift + s
+"goto -f term.a"
+   Alt + Shift + a
+#"goto -f logs"
+#   Alt + Shift + l
+#"goto -f rtfm"
+#   Alt + Shift + r
+"goto -f term.v"
+   Alt + Shift + v
+#raise hilite
+"goto -f term.h"
+   Alt + Shift + h
+
+#raise firefox (the first window)
+#"goto.or.error Firefox"
+#"cycle.firefox ff_index Firefox"
+#   Alt + space
+
+#"goto.or.error Firefox"
+#raise firefox (the first window)
+# "cycle.firefox ff_index Firefox"
+#"cycle browsers '(Chromium|Opera|Mozilla Firefox)'"
+# 	Control + space
+
+#raise opera (the first window)
+#"goto.or.error Opera"
+#   Alt + o
+
+#Show Desktop
+"(goto -e Vim) || cycle gvimdiff '\) - GVIMDIFF' || (test -f  /dev/shm/desktop.flip && wmctrl -k on && rm -f /dev/shm/desktop.flip) || (wmctrl -k off && touch /dev/shm/desktop.flip)"
+    Alt + d 
+
+#"fake.company.signup.sh"
+"goto.or.error full"
+	Alt + f
+
+"$HOME/wmgr/cycle term_index term\\."
+	Alt + n
+
+"prevterm"
+	Alt + p
+
+"$HOME/wmgr/xterms"
+	Alt + x
+
+#"browsers"
+#	Alt + b
+"wmctrl -a Chrome"
+	Alt + b
+
+#"xmag.sh"
+#	Alt + z
+
+"altj"
+	Alt + j
+
+"keynav"
+	Alt + semicolon
+
+#"xdotool click 1"
+#	Alt + bracketright
+
+#"mpc prev"
+#	Control + F9
+#"mpc next"
+#	Control + F12
+#"mpc next"
+#	Pause
+"killall -9 xclick || xclick"
+	Alt + c
+
+#"mpc volume -5"
+#	Control + F10
+	#Shift + Control + KP_Subtract
+#"mpc volume +5"
+#	Control + F11
+#"mpc toggle"
+#	Control + F8
+	#Shift + Control + KP_Add

@@ -1,0 +1,147 @@
+#!/usr/bin/env perl
+# vim:set sts=4 ts=4 sw=4 expandtab:
+# xterms - start a bunch of xterms
+# Created: Fri Jul 25 09:09:18 MYT 2008
+
+use strict;
+use warnings;
+use Getopt::Std;
+use File::Basename;
+
+qx/screen -wipe/;
+
+my $cwd = dirname(__FILE__);
+my $geom = qx/xrandr | grep '\*'/;
+
+my $two_screen_width = 3360;
+my $offset_x = 0;
+if ($geom =~ /$two_screen_width/) {
+    $offset_x = $two_screen_width / 2;
+}
+
+my $full_rows=69;
+my $offset_y = '+-2'; # '+-15';
+# Need to add 1680 for two monitors
+my %geometries = ( 
+  #  # logs      => '209x60-' . (0) . '+0',
+  any       => "116x$full_rows+" . ($offset_x + 478) . $offset_y,    # anything goes
+  #  # rtfm      => '100x83+' . ($offset_x + 247) . '+0',    # read man pages here
+  #  # gits      => '140x83+' . ($offset_x + 403) . '+0',
+  hilite    => "160x32-3" . $offset_y,
+  full      => "239x$full_rows+" . ($offset_x + 0) . $offset_y,
+  shells    => "119x$full_rows+0" . $offset_y,
+  vims      => "120x$full_rows-0" . $offset_y,
+);
+
+my $xterms = {};
+
+foreach my $session (keys %geometries) {
+    my $executable = "$cwd/screen.$session";
+    if ( not -f $executable  ) {
+        $executable = "screen -DR $session";
+        # croak "The file screen.$executable does not exist.\n".
+        #       "Its content should be somewhat like this:\n".
+        #       "screen -DR man\n";
+    }
+    my ($title) = "term.$session" =~ /(term..).*/;
+
+    $xterms->{$session} = "TERM_NAME=$session "
+
+                        # .  "xfce4-terminal "
+                        # .  "gnome-terminal "
+                        # .  "rxvt-unicode "
+                        # . "xterm "
+                        # . "/usr/local/bin/uxterm "
+                        . "/usr/bin/uxterm "
+                        # . "/usr/local/bin/xterm -u8 "
+
+                        # gnome-terminal:
+                        # .  "--title term.$session "
+                        # xterm:
+                        .  "-title $title "
+                        # .  "-fg white -bg black "
+                        .  "-b 0 "
+
+                        # xfce4-terminal:
+                        # .  "--geometry=". $geometries{$session} . " "
+                        # rxvt-unicode:
+                        # .  "--geometry ". $geometries{$session} . " "
+                        # xterm:
+                        .  "-geometry ". $geometries{$session} . " "
+
+                        .  "-e $executable  &";
+}
+
+my @torun;
+
+my %opts;
+getopts('l', \%opts);
+if (defined $opts{l}) {
+    print join("\n", keys %geometries) . "\n";
+    exit 0;
+}
+
+if (defined($ARGV[0])) {
+  my $which = $ARGV[0];
+  if (defined($xterms->{$which})) {
+    push @torun, $which;
+  } else {
+    usage();
+    exit(0);
+  }
+} else {
+  my $screen_status = get_screen_status();
+  foreach my $which (keys %{$xterms}) {
+    push @torun, $which if ok_to_run($which, $screen_status);
+  }
+}
+
+
+foreach my $which (@torun) {
+    print "system($xterms->{$which})\n";
+    system("cd $ENV{HOME}; $xterms->{$which}");
+}
+#`(sleep 4 && cwd=$cwd $cwd/xterms.seticons.sh )&`;
+`cwd=$cwd $cwd/xterms.seticons.sh &`;
+
+system("if ps -ef|grep xbindkeys|grep -q -v grep; then :; else  $cwd/xbind; fi");
+
+sub get_screen_status {
+  # output of screen -ls:
+  #    There are screens on:
+  #  <tab>5138.vims           <tab>(Attached)
+  #     24754.anything           (Attached)
+  #     24752.session            (Attached)
+  #     24748.shells             (Attached)
+  #    5 Sockets in /var/run/screen/S-user.
+  my @screen_list = `screen -ls|grep '^\t'`;
+  my $screen_status = {};
+  foreach my $screen_session (@screen_list) {
+    chomp $screen_session;
+    my ($empty, $pid_name, $date, $status) = split(/\t/, $screen_session);
+    $pid_name =~ /([0-9])+\.(.*)/;
+    my $name = $2;
+    $screen_status->{$name} = $status;
+  }
+  return $screen_status;
+}
+
+# ok to run means:
+#   The screen does not exist OR The screen is detached.
+sub ok_to_run {
+  my $which = shift;
+  my $screen_status = shift;
+
+  if (!defined($screen_status->{$which})) {
+    return 1;
+  }
+  if ($screen_status->{$which} eq '(Detached)') {
+    return 1;
+  }
+
+  return 0;
+}
+
+sub usage {
+  print "Usage: xterms [logs|shells|vims]\n";
+}

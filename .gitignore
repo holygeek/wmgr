@@ -1,0 +1,11 @@
+*.png
+.gitignore
+dircolors-solarized
+solarized
+screen.any
+screen.full
+screen.hilite
+screen.shells
+screen.vims
+*.xbm
+*.swp

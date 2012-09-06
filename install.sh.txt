@@ -1,0 +1,20 @@
+#depends:
+sudo apt-get install wmctrl xbindkeys suckless-tools
+
+# apt-get source screen
+# # comment out 'New screen' message in screen.c
+# sudo apt-get build-dep screen
+# dpkg-buildpackage -rfakeroot -uc -b
+
+# install xseticon
+
+# Solarized:
+git clone https://github.com/altercation/solarized.git
+git clone https://github.com/seebi/dircolors-solarized.git
+
+
+
+here=`pwd`
+ln -s $here/Xresources $HOME/.Xresources
+ln -s $here/xdg.autostart.xbindkeys.desktop /etc/xdg/autostart/xbindkeys.desktop
+

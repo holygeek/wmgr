@@ -1,0 +1,8 @@
+#!/bin/sh
+# currwin - show window id of currently focused window
+# Created: Thu Oct  9 11:34:10 MYT 2008
+
+# wmctrl -r :ACTIVE: -L|awk '{print $1}'
+# Or this:
+xprop -root _NET_ACTIVE_WINDOW|awk '{print $5}'
+ #|sed -e 's/,.*//'

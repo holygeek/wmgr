@@ -1,0 +1,17 @@
+#!/bin/sh
+# xbind - Restart xbindkeys
+# Created: Wed Aug 13 17:33:14 MYT 2008
+
+if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+	DISPLAY=:0 zenity --info --text "No dbus session bus address"
+fi
+if [ "x$1" = "x-e" ]; then
+	vi ~/.xbindkeysrc
+elif [ "x$1" = "x-k" ]; then
+	killall -9 xbindkeys
+else
+	if ps -C xbindkeys > /dev/null; then
+	killall -9 xbindkeys 
+	fi
+	xbindkeys
+fi

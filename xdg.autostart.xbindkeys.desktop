@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=xbindkeys
+Comment=Manage your keyboard shortcut
+Icon=input-mouse
+Exec=/usr/bin/xbindkeys
+Terminal=false
+Type=Application
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
