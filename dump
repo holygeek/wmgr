@@ -1,14 +1,13 @@
-#!/bin/zsh
+#!/bin/sh
 # Created: Mon Sep 10 16:02:57 MYT 2012
 
 usage() {
-    echo "DESCRIPTION
+    echo -n "DESCRIPTION
   dump - dump content of a screen session to stdout
 USAGE
-  dump [-h] <term_id>
-OPTIONS
-
+  dump [-h] <screen session>
 "
+#OPTIONS
 }
 
 while getopts h opt
