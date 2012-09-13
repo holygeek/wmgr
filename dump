@@ -1,0 +1,29 @@
+#!/bin/zsh
+# Created: Mon Sep 10 16:02:57 MYT 2012
+
+usage() {
+    echo "DESCRIPTION
+  dump - dump content of a screen session to stdout
+USAGE
+  dump [-h] <term_id>
+OPTIONS
+
+"
+}
+
+while getopts h opt
+do
+  case "$opt" in
+    h) usage ; exit;;
+    \?) echo Unknown option ; exit;;
+  esac
+done
+shift $(($OPTIND -1))
+
+term=$1
+if [ -z "$term" ]; then
+  usage
+fi
+
+out=~/tmp/dump
+screen -d -r $term -X hardcopy $out && cat $out
