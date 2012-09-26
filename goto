@@ -33,7 +33,6 @@ if ( @ARGV == 0 ) {
 my $exact_match='';
 if ($opts{e}) {
 	# Exact match with windows title
-	shift @ARGV;
 	$exact_match = '-F';
 }
 my $arg = $ARGV[0];
