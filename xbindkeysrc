@@ -43,9 +43,17 @@
 #   Alt + r
 "goto.or.error term.v"
    Alt + v
-#raise hilite
 "goto.or.error term.h"
    Alt + h
+"goto.or.error term.f"
+   Alt + f
+"goto.or.error term.g"
+   Alt + g
+"goto.or.error term.i"
+   Alt + i
+"goto.or.error term.r"
+   Alt + r
+
 
 "goto -f term.s"
    Alt + Shift + s
@@ -60,6 +68,14 @@
 #raise hilite
 "goto -f term.h"
    Alt + Shift + h
+"goto -f term.f"
+   Alt + Shift + f
+"goto -f term.g"
+   Alt + Shift + g
+"goto -f term.i"
+   Alt + Shift + i
+"goto -f term.r"
+   Alt + Shift + r
 
 #raise firefox (the first window)
 #"goto.or.error Firefox"
