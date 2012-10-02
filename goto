@@ -40,6 +40,17 @@ my $arg = $ARGV[0];
 my $currently_focused_windowid=`currwin`;
 chomp $currently_focused_windowid;
 
+my %winid_file_for = (
+  'term.a' => '/tmp/term.any.winid',
+  'term.f' => '/tmp/term.full.winid',
+  'term.g' => '/tmp/term.gran.winid',
+  'term.h' => '/tmp/term.hilite.winid',
+  'term.i' => '/tmp/term.imp.winid',
+  'term.r' => '/tmp/term.rtfm.winid',
+  'term.s' => '/tmp/term.shells.winid',
+  'term.v' => '/tmp/term.vims.winid',
+);
+
 if ($arg =~ /[0-9]+/) {
 	# 	goto N
 	#   raise N'th window (as listed by goto)
@@ -52,6 +63,19 @@ if ($arg =~ /[0-9]+/) {
 		#DEBUG print "window_id = [$window_id]\n";
 		exit 1;
 	}
+} elsif (exists $winid_file_for{$arg} && -f $winid_file_for{$arg}) {
+        my $window_id = `cat $winid_file_for{$arg}`;
+        chomp $window_id;
+        raise_window($window_id);
+        # if ($opts{f}) {
+        #       # Focus only, no raise
+        #       $cmd = "xdotool windowfocus $window_id";
+        # } else {
+        #       $cmd = "wmctrl -i -a $window_id";
+        # }
+        # system($cmd);
+        exit 0
+        #print 'huha';
 } else {
 	my $pattern = qr/$arg/;
 	if($arg =~ /^(anything|gits|hilite|logs|rtfm|shells|vims)$/) {
@@ -77,11 +101,6 @@ if ($arg =~ /[0-9]+/) {
 			#DEBUG print;
 			exit $ret;
 		}
-	}
-	if ( -f "/tmp/term.$arg.winid" ) {
-		system("wmctrl -i -a `cat /tmp/term.$arg.winid`");
-		exit 0
-		#print 'huha';
 	}
 	exit 1;
 }
