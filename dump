@@ -1,19 +1,31 @@
 #!/bin/sh
 # Created: Mon Sep 10 16:02:57 MYT 2012
+. `dirname $0`/common.sh
 
 usage() {
     echo -n "DESCRIPTION
   dump - dump content of a screen session to stdout
 USAGE
-  dump [-h] <screen session>
+  dump [-h] [-A] <screen session>
+OPTIONS
+  -A
+    Dump the scrollback buffer contets too
+  -d
+    Show debugging messages
+  -n
+    Dry run.
 "
 #OPTIONS
 }
 
-while getopts h opt
+dump_with_scrollback=
+while getopts dhAn opt
 do
   case "$opt" in
+    A) dump_with_scrollback=-h;;
+    d) debug=t;;
     h) usage ; exit;;
+    n) dry_run=t;;
     \?) echo Unknown option ; exit;;
   esac
 done
@@ -25,4 +37,15 @@ if [ -z "$term" ]; then
 fi
 
 out=~/tmp/dump
-screen -d -r $term -X hardcopy $out && cat $out
+rm -f $out
+touch $out
+oldnlines=-1
+exe "screen -d -r $term -X hardcopy $dump_with_scrollback $out"
+if [ -n "$dump_with_scrollback" ]; then
+  # It takes a while ...
+  while [ `cat $out|wc -l` -ne $oldnlines ]; do
+    oldnlines=`cat $out|wc -l`
+    sleep .01
+  done
+fi
+exe cat $out
