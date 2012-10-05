@@ -10,20 +10,27 @@ USAGE
 OPTIONS
   -A
     Dump the scrollback buffer contets too
+
+  -c
+    Use the previous 'cached' dump, do not ask screen to redump.
+
   -d
     Show debugging messages
+
   -n
     Dry run.
 "
 #OPTIONS
 }
 
+from_cache=
 dump_with_scrollback=
-while getopts dhAn opt
+while getopts Acdhn opt
 do
   case "$opt" in
     A) dump_with_scrollback=-h;;
     d) debug=t;;
+    c) from_cache=t;;
     h) usage ; exit;;
     n) dry_run=t;;
     \?) echo Unknown option ; exit;;
@@ -36,7 +43,13 @@ if [ -z "$term" ]; then
   usage
 fi
 
-out=~/tmp/dump
+out=~/tmp/dump.$term
+
+if [ -n "$from_cache" ]; then
+  cat $out
+  exit 0
+fi
+
 rm -f $out
 touch $out
 oldnlines=-1
