@@ -1,0 +1,58 @@
+#!/bin/sh
+# Created: Fri Oct  5 10:50:44 MYT 2012
+. `dirname $0`/common.sh
+
+me=`basename $0`
+usage() {
+    echo -n "DESCRIPTION
+  $me - Show matching text from all terminals that matches the BRE <base>
+SYNOPSIS
+  $me [-dhnv] <base>
+OPTIONS
+  -d
+    Show debugging messages
+
+  -e <term_name>
+    Exclude strings from <term_name>
+
+  -h
+    Show this help message
+
+  -n
+    Dry run
+
+  -v
+    Verbose output
+"
+}
+
+debug=
+exclude=
+dry_run=
+pager=cat
+while getopts de:fhlnv opt
+do
+  case "$opt" in
+    d) debug=t;;
+    e) exclude="$OPTARG";;
+    h) usage ; exit;;
+    l) pager='sed -e "s/^/$terms: /"';;
+    n) dry_run=t;;
+    v) verbose=t;;
+    \?) echo Unknown option ; exit;;
+  esac
+done
+shift $(($OPTIND -1))
+
+base=$1
+if [ -z "$1" ]; then
+  exit 0
+fi
+
+for terms in `xterms -l`; do
+  case $terms in
+    $exclude) continue ;;
+  esac
+  eval "dump $terms|tr ' ' '\n'|grep $base|$pager"
+done | sort -u
+
