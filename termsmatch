@@ -13,7 +13,7 @@ OPTIONS
     Show debugging messages
 
   -e <term_name>
-    Exclude strings from <term_name>
+    Exclude strings from terminals that matches <term_name*>
 
   -h
     Show this help message
@@ -51,7 +51,7 @@ fi
 
 for terms in `xterms -l`; do
   case $terms in
-    $exclude) continue ;;
+    ${exclude:--}*) continue ;;
   esac
   eval "dump $terms|tr ' ' '\n'|grep $base|$pager"
 done | sort -u
