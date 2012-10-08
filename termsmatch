@@ -18,6 +18,9 @@ OPTIONS
   -h
     Show this help message
 
+  -l
+    List the origin TERM_NAME for each match shown.
+
   -n
     Dry run
 
