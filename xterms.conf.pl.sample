@@ -1,0 +1,21 @@
+{
+  my $full_rows = 69;
+  my $offset_x = 0;
+  my $offset_y = '+-2';
+  my $hide_title_bar = '+-25';
+
+  my %config = (
+  geometries => {
+      #logs      => '209x60-' . (0) . '+0',
+      any    => "67x$full_rows-" . ($offset_x + 1) . $offset_y,    # anything goes
+      #gits      => '140x83+' . ($offset_x + 403) . '+0',
+      hilite => "153x32-3" . $offset_y,
+      full   => "239x55+" . ($offset_x + 0) . $hide_title_bar,
+      shells => "86x$full_rows+-1" . $offset_y,
+      vims   => "86x$full_rows+689" . $offset_y,
+      gran   => "120x55--6$hide_title_bar",
+      imp    => "120x55+-2$hide_title_bar",
+      rtfm   => "86x70+270$hide_title_bar",
+    }
+  );
+}
