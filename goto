@@ -22,7 +22,7 @@ use Getopt::Std;
 # 	raise window whose title matches this regex: .*name
 
 my %opts;
-getopts('ef', \%opts);
+getopts('vef', \%opts);
 
 if ( @ARGV == 0 ) { 
 	# 	list all windows
@@ -35,6 +35,14 @@ if ($opts{e}) {
 	# Exact match with windows title
 	$exact_match = '-F';
 }
+my $verbose = $opts{v};
+sub verbose {
+  return if !$verbose;
+
+  my ($text) = @_;
+  print $text;
+}
+
 my $arg = $ARGV[0];
 
 my $currently_focused_windowid=`currwin`;
@@ -52,15 +60,14 @@ my %winid_file_for = (
 );
 
 if ($arg =~ /[0-9]+/) {
-	# 	goto N
-	#   raise N'th window (as listed by goto)
+	verbose "goto N\n";
+	verbose "raise N'th window (as listed by goto)\n";
 	my $window_id = get_window_id(`wmctrl -l|head -$arg|tail -1`);
-	#DEBUG print "window_id = [$window_id]\n";
+	verbose "window_id = [$window_id]\n";
 	if ($window_id =~ m/^0x/) {
 		exit raise_window($window_id);
 	} else {
-		#DEBUG print "Invalid argument [$arg]\n";
-		#DEBUG print "window_id = [$window_id]\n";
+		verbose "Invalid argument [$arg]\n";
 		exit 1;
 	}
 } elsif (exists $winid_file_for{$arg} && -f $winid_file_for{$arg}) {
@@ -108,6 +115,7 @@ if ($arg =~ /[0-9]+/) {
 
 sub raise_window {
 	my $window_id = shift;
+	verbose "raise_window: $window_id\n";
 	my $cmd;
         if ($opts{f}) {
                 # Focus only, no raise
