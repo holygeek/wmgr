@@ -102,8 +102,9 @@ if (defined($ARGV[0])) {
 
 
 foreach my $which (@torun) {
-    print "system($xterms->{$which})\n";
-    system("cd $ENV{HOME}; $xterms->{$which}");
+    my $cmd = $xterms->{$which};
+    print "$cmd\n";
+    system("cd $ENV{HOME}; $cmd");
 }
 #`(sleep 4 && cwd=$cwd $cwd/xterms.seticons.sh )&`;
 `cwd=$cwd $cwd/xterms.seticons.sh &`;
