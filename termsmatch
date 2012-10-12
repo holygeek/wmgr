@@ -56,6 +56,6 @@ for terms in `xterms -l`; do
   case $terms in
     ${exclude:--}*) continue ;;
   esac
-  eval "dump $terms|tr ' ' '\n'|grep $base|$pager"
+  eval "dump $terms|tr ' ' '\n'|grep -- '$base'|$pager"
 done | sort -u
 
