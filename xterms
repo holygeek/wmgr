@@ -63,6 +63,8 @@ foreach my $session (keys %$geometries) {
                         .  "-title $title "
                         .  "-fg white -bg black "
                         .  "-b 0 "
+                        # Do not scroll window on new output
+                        . "-si "
 
                         # xfce4-terminal:
                         # .  "--geometry=". $geometries->{$session} . " "
