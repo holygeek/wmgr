@@ -106,6 +106,7 @@ foreach my $which (@torun) {
     print "$cmd\n";
     system("cd $ENV{HOME}; $cmd");
 }
+sleep 2; update_winid(@torun);
 #`(sleep 4 && cwd=$cwd $cwd/xterms.seticons.sh )&`;
 `cwd=$cwd $cwd/xterms.seticons.sh &`;
 
@@ -168,4 +169,28 @@ sub ok_to_run {
 
 sub usage {
   print "Usage: xterms [logs|shells|vims]\n";
+}
+
+sub update_winid {
+    my (@to_run) = @_;
+
+    my (@cmds) = map { $xterms->{$_} } @to_run;
+    my (@new_titles) = map { $_ =~ s/.*-title //; $_ =~ s/ .*//; $_ } @cmds;
+
+    my @term_list = `wmctrl -l|grep ' term.[a-z]\$'`;
+    my %winids;
+    foreach my $line (@term_list) {
+        chomp $line;
+        my (@e) = split(/  */, $line);
+        #0x03200024  0 a term.f
+        my $id = $e[0];
+        my $title = $e[3];
+        $winids{$title} = $id;
+    }
+
+    foreach my $title (@new_titles) {
+        my $cmd = "echo $winids{$title} > /tmp/$title.winid";
+        print $cmd . "\n";
+        system($cmd);
+    }
 }
