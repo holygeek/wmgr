@@ -61,7 +61,7 @@ foreach my $session (keys %$geometries) {
                         # .  "--title term.$session "
                         # xterm:
                         .  "-title $title "
-                        # .  "-fg white -bg black "
+                        .  "-fg white -bg black "
                         .  "-b 0 "
 
                         # xfce4-terminal:
