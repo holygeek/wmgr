@@ -11,5 +11,6 @@ handle_dne() {
   return 1;
 }
 
-goto $1 || (handle_dne $1 || zenity --error 'Broken Window' --text "$1 is not running."; exit 1)
+echo goto $*
+goto $* || (handle_dne $1 || zenity --error 'Broken Window' --text "$1 is not running."; exit 1)
 
