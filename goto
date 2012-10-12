@@ -82,11 +82,9 @@ if ($arg =~ /[0-9]+/) {
 		if (/$pattern/) {
 			my $winid = get_window_id($_);
 			my $ret = 0;
-			#DEBUG print "winid: [$winid]\n";
-			#DEBUG print "curr:  [$currently_focused_windowid]\n";
+			verbose "winid: [$winid]\n";
+			verbose "curr:  [$currently_focused_windowid]\n";
 			if ($winid ne $currently_focused_windowid) {
-				#DEBUG print "inserting $currently_focused_windowid into /tmp/oldwin\n";
-				#`/bin/sh -c "set -o noglob; echo $currently_focused_windowid > /tmp/oldwin"`;
 				old_window_is($currently_focused_windowid);
 				$ret = raise_window($winid);
 			} else {
