@@ -21,7 +21,7 @@ use Getopt::Std;
 # 	goto title
 # 	raise window whose title matches this regex: .*name
 
-my $TMP_DIR = '/tmp';
+my $TMP_DIR = '/dev/shm';
 my %opts;
 getopts('vef', \%opts);
 

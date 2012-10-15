@@ -1,4 +1,4 @@
-tmp_dir = /tmp
+tmp_dir = /dev/shm
 all: xterms_icons update_icons
 
 xterms_icons:

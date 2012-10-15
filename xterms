@@ -11,7 +11,7 @@ use File::Slurp;
 
 qx/screen -wipe/;
 
-my $TMP_DIR = '/tmp';
+my $TMP_DIR = '/dev/shm';
 my $cwd = dirname(__FILE__);
 my $geom = qx/xrandr | grep '\*'/;
 

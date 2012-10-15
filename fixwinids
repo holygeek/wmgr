@@ -1,5 +1,5 @@
 #!/bin/sh
-tmpdir=/tmp
+tmpdir=/dev/shm
 screen -ls|grep '('|awk '{print $1}'|sed -e 's/\./ /'|while read pid termname
 do
   first_letter=`echo $termname|sed -e 's/\(.\).*/\1/'`

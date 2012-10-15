@@ -1,7 +1,7 @@
 #!/bin/sh
 # xterms.seticons.sh - Set icons for xterms
 # Created: Wed Feb 15 11:23:53 MYT 2012
-tmp_dir=/tmp
+tmp_dir=/dev/shm
 cwd=${cwd:-$HOME/wmgr}
 for i in $tmp_dir/term.*.winid; do
     window_id=`cat $i`
