@@ -21,6 +21,7 @@ use Getopt::Std;
 # 	goto title
 # 	raise window whose title matches this regex: .*name
 
+my $TMP_DIR = '/tmp';
 my %opts;
 getopts('vef', \%opts);
 
@@ -59,9 +60,9 @@ if ($arg =~ /[0-9]+/) {
 		verbose "Invalid argument [$arg]\n";
 		exit 1;
 	}
-} elsif (-f "/tmp/$arg.winid") {
-        verbose "via /tmp/$arg.winid\n";
-        my $window_id = `cat /tmp/$arg.winid`;
+} elsif (-f "$TMP_DIR/$arg.winid") {
+        verbose "via $TMP_DIR/$arg.winid\n";
+        my $window_id = `cat $TMP_DIR/$arg.winid`;
         chomp $window_id;
         raise_window($window_id);
         # if ($opts{f}) {
@@ -113,14 +114,14 @@ sub raise_window {
 }
 
 sub raise_previous_window {
-	my $oldwin = `cat /tmp/oldwin`;
+	my $oldwin = `cat $TMP_DIR/oldwin`;
 	old_window_is($currently_focused_windowid);
 	return system("wmctrl -i -a $oldwin; xdotool windowfocus $oldwin");
 }
 
 sub old_window_is {
 	my $id = shift;
-	`/bin/sh -c "set -o noglob; echo $id > /tmp/oldwin"`;
+	`/bin/sh -c "set -o noglob; echo $id > $TMP_DIR/oldwin"`;
 }
 
 sub get_window_id {

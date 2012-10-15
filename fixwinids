@@ -1,8 +1,9 @@
 #!/bin/sh
+tmpdir=/tmp
 screen -ls|grep '('|awk '{print $1}'|sed -e 's/\./ /'|while read pid termname
 do
   first_letter=`echo $termname|sed -e 's/\(.\).*/\1/'`
-  file=/tmp/term.$termname.winid
+  file=$tmpdir/term.$termname.winid
   if [ -f $file ]; then
     xwininfo -root -tree|grep '"[t]erm\.'$first_letter'"'|awk '{print $1" "$2}' |
     while read hexwinid title

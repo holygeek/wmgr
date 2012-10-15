@@ -1,3 +1,4 @@
+tmp_dir = /tmp
 all: xterms_icons update_icons
 
 xterms_icons:
@@ -9,7 +10,7 @@ xterms_icons:
 	done
 
 update_icons:
-	for i in /tmp/term.*.winid; \
+	for i in $(tmp_dir)/term.*.winid; \
 	do \
 		x=`echo $$i|sed -e 's/[^.]\+.//' -e 's/\(.\).*/\1/'`; \
 		xwit -id `cat $$i` -bitmap $$x.xbm; \

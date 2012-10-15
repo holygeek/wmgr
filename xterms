@@ -11,6 +11,7 @@ use File::Slurp;
 
 qx/screen -wipe/;
 
+my $TMP_DIR = '/tmp';
 my $cwd = dirname(__FILE__);
 my $geom = qx/xrandr | grep '\*'/;
 
@@ -189,7 +190,7 @@ sub update_winid {
     }
 
     foreach my $title (@new_titles) {
-        my $cmd = "echo $winids{$title} > /tmp/$title.winid";
+        my $cmd = "echo $winids{$title} > $TMP_DIR/$title.winid";
         print $cmd . "\n";
         system($cmd);
     }
