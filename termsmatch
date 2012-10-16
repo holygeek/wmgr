@@ -24,6 +24,9 @@ OPTIONS
   -n
     Dry run
 
+  -s
+    Do not split token, show whole line
+
   -v
     Verbose output
 "
@@ -32,8 +35,9 @@ OPTIONS
 debug=
 exclude=
 dry_run=
+split="tr ' ' '\n'"
 pager=cat
-while getopts de:fhlnv opt
+while getopts de:fhlnsv opt
 do
   case "$opt" in
     d) debug=t;;
@@ -41,6 +45,7 @@ do
     h) usage ; exit;;
     l) pager='sed -e "s/^/$terms: /"';;
     n) dry_run=t;;
+    s) split='cat';;
     v) verbose=t;;
     \?) echo Unknown option ; exit;;
   esac
@@ -56,6 +61,6 @@ for terms in `xterms -l`; do
   case $terms in
     ${exclude:--}*) continue ;;
   esac
-  eval "dump $terms|tr ' ' '\n'|grep -- '$base'|$pager"
+  eval "dump $terms|$split|grep -- '$base'|$pager"
 done | sort -u
 
