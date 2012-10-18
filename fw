@@ -1,0 +1,45 @@
+#!/bin/zsh
+# fw - find out in which terminal vim is holding the swap file hostage
+# Created: Mon Sep 10 15:42:03 MYT 2012
+
+usage() {
+  echo "USAGE
+  fw [pid]
+DESCRIPTION
+  show from which term.* <pid> is running from.
+"
+}
+
+if [ -z "$pid" ]; then
+  for term in `xterms -l`; do
+    pid=`dump $term|grep 'process ID: [0-9][0-9]* (still running)'|sed -e 's/.*: \([0-9]\+\) .*/\1/'`
+    if [ -n "$pid" ]; then
+      break
+    fi
+  done
+
+  if [ -z "$pid" ]; then
+    pid=$1
+  fi
+fi
+
+if [ -z "$pid" ]; then
+  pid=`xclip -o`
+fi
+
+if [ -z "$pid" ]; then
+  usage
+  exit 1
+fi
+echo pid: $pid
+
+eval `cat /proc/$pid/environ|tr '\000' '\n'|grep -E '^(TERM_NAME|WINDOW|SHLVL)='`
+#window=`cat /proc/$pid/environ|tr '\000' '\n'|grep 'WINDOW='`
+for v in TERM_NAME WINDOW SHLVL; do
+  eval echo $v=$`echo $v`
+done
+if [ -n "$term" ]; then
+  goto term.$TERM_NAME[1]
+  echo screen -d -r $TERM_NAME -X select $WINDOW
+  screen -d -r $TERM_NAME -X select $WINDOW
+fi
