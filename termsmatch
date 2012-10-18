@@ -29,6 +29,9 @@ OPTIONS
 
   -v
     Verbose output
+
+  -/
+    Further limit the output to tokens that has the '/' path separator in them.
 "
 }
 
@@ -37,7 +40,8 @@ exclude=
 dry_run=
 split="tr ' ' '\n'"
 pager=cat
-while getopts de:fhlnsv opt
+limit_to_files=
+while getopts de:fhlnsv/ opt
 do
   case "$opt" in
     d) debug=t;;
@@ -47,6 +51,7 @@ do
     n) dry_run=t;;
     s) split='cat';;
     v) verbose=t;;
+    /) limit_to_files=t;;
     \?) echo Unknown option ; exit;;
   esac
 done
@@ -55,6 +60,9 @@ shift $(($OPTIND -1))
 base=$1
 if [ -z "$1" ]; then
   exit 0
+fi
+if [ -n "$limit_to_files" ]; then
+  pager="$pager|grep /"
 fi
 
 for terms in `xterms -l`; do
