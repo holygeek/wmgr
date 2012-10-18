@@ -3,14 +3,12 @@ tmpdir=/dev/shm
 screen -ls|grep '('|awk '{print $1}'|sed -e 's/\./ /'|while read pid termname
 do
   first_letter=`echo $termname|sed -e 's/\(.\).*/\1/'`
-  file=$tmpdir/term.$termname.winid
-  if [ -f $file ]; then
-    xwininfo -root -tree|grep '"[t]erm\.'$first_letter'"'|awk '{print $1" "$2}' |
-    while read hexwinid title
-    do
-      decwinid=`echo "ibase=16; $hexwinid"|sed -e 's/ 0x\(.*\)/\U\1/'|bc`
-      echo "echo $decwinid > $file"
-      echo $decwinid > $file
-    done
-  fi
+  file=$tmpdir/term.$first_letter
+  xwininfo -root -tree|grep '"[t]erm\.'$first_letter'"'|awk '{print $1" "$2}' |
+  while read hexwinid title
+  do
+    decwinid=`echo "ibase=16; $hexwinid"|sed -e 's/ 0x\(.*\)/\U\1/'|bc`
+    echo "echo $decwinid > $file"
+    echo $decwinid > $file
+  done
 done
