@@ -1,0 +1,50 @@
+#!/bin/sh
+. `dirname $0`/common.sh
+
+me=`basename $0`
+usage() {
+cat <<EOF
+NAME
+  $me - Show commands issued in all terminals
+SYNOPSIS
+  $me [-h]
+  $me <pattern>
+  $me <pattern> <nth>
+DESCRIPTION
+  $me <pattern>
+    Shows commands matching pattern from all terminals
+
+  $me <pattern> [nth]
+    If [nth] is given, only show the [nth] command that matches <pattern>.
+OPTIONS
+  -h
+    Show this help message
+EOF
+}
+
+debug=
+dry_run=
+while getopts h opt
+do
+  case "$opt" in
+    h) usage ; exit;;
+    \?) echo Unknown option ; exit;;
+  esac
+done
+shift $(($OPTIND -1))
+
+pattern=${1:-[a-z]}
+nth=$2
+if [ -n "$2" ]; then
+  pager="head -$2|tail -1"
+else
+  pager="cat -n|sed -e 's/^  *//'"
+fi
+RPROMPT_REGEX='....:..:..$'
+eval "termsmatch -s '^% .*$pattern' |
+sed -e 's/^% //' -e 's/$RPROMPT_REGEX//' -e 's/   *$//' |
+$pager"
+
+# |while read line; do
+#   echo $line
+# done
