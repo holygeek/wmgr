@@ -4,7 +4,8 @@
 
 me=`basename $0`
 usage() {
-    echo -n "DESCRIPTION
+cat <<EOF
+DESCRIPTION
   $me - Show matching text from all terminals that matches the BRE <base>
 SYNOPSIS
   $me [-dhnv] <base>
@@ -31,8 +32,10 @@ OPTIONS
     Verbose output
 
   -/
-    Further limit the output to tokens that has the '/' path separator in them.
-"
+    Further limit the output to tokens that look like filenames - the ones that
+    matches this pattern: [/.-_], and strip unlikely characters from them -
+    ['"].
+EOF
 }
 
 debug=
