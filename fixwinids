@@ -2,8 +2,9 @@
 tmpdir=/dev/shm
 screen -ls|grep '('|awk '{print $1}'|sed -e 's/\./ /'|while read pid termname
 do
-  winidfile=$tmpdir/term.$termname[1].winid
-  xwininfo -root -tree|grep '"[t]erm\.'$termname[1]'"'|awk '{print $1" "$2}' |
+  firstletter=`echo $termname|sed -e 's/\(.\).*/\1/'`
+  winidfile=$tmpdir/term.$firstletter.winid
+  xwininfo -root -tree|grep '"[t]erm\.'$firstletter'"'|awk '{print $1" "$2}' |
   while read hexwinid title
   do
     decwinid=`echo "ibase=16; $hexwinid"|sed -e 's/ 0x\(.*\)/\U\1/'|bc`
