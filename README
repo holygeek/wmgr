@@ -1,1 +1,5 @@
-A collection of scripts to manage a bunch of terminals
+A collection of scripts to manage a bunch of terminals.
+
+Each terminal runs a dedicated screen session named $TERM_NAME.
+
+For there on, the shell is the limit.
