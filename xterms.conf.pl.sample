@@ -1,17 +1,44 @@
 {
-  my $full_rows = 70;
-  my $from_top = '+8';
+  # Dejavu Sans Mono FaceSize 10 - 8x17 pixels block for each xterm character
+  my $W = 17;
+  my $H = 8;
+
+  # Border Size
+  my $bs = 1;
+
+  # Full Width
+  my $fw = int($root_width / $H);
+
+  # Full Height
+  my $fh = int($root_height / $W);
+
+  # Half Width
+  my $hw = $fw/2;
+
+  # Head room.
+  my $hr = '+' . ($root_height % $W - $bs - $bs);
+
+  # Comfort Width
+  my $cw = 86;
+
+  # Legroom
+  my $lr = 15;
 
   my %config = (
   geometries => {
-      hilite => join('', 153, 'x',         32, '-',   6, '+', $from_top),
-      full   => join('', 239, 'x',         55, '+',   0, '+', $from_top),
-      gran   => join('', 120, 'x',         55, '-',  -3, '+', $from_top),
-      imp    => join('', 120, 'x',         55, '+',  -0, '+', $from_top),
-      any    => join('',  67, 'x', $full_rows, '-',   3, '+', $from_top),
-      shells => join('',  86, 'x', $full_rows, '+',  -1, '-', 0),
-      vims   => join('',  86, 'x', $full_rows, '+', 689, '-', 0),
-      rtfm   => join('',  86, 'x', $full_rows, '+', 270, '-', 0),
+      hilite => join('', $fw - $cw, 'x',        32, '-',   -$bs, '+', $hr),
+      full   => join('', $fw      , 'x', $fh - $lr, '+', -$bs, '+', $hr),
+      imp    => join('', $hw      , 'x', $fh - $lr, '+', -$bs, '+', $hr),
+      gran   => join('', $hw      , 'x', $fh - $lr, '-', -$bs, '+', $hr),
+      rtfm   => join('', $cw      , 'x', $fh      , '-',    0, '-',   0),
+      shells => join('', $cw      , 'x', $fh      , '+', -$bs, '-',   0),
+      vims   => join('', $cw      , 'x', $fh      , '+',
+                          # Place it right next to shells
+                          $cw * $H + $bs, '-', 0),
+      any    => join('',
+                     # Fill up remaining space after shells and vims
+                     int(($root_width - $bs) / $H) - $cw * 2,
+                     'x', $fh, '-',   3, '+', $hr),
     }
   );
 }
