@@ -33,7 +33,7 @@ OPTIONS
 
   -/
     Further limit the output to tokens that look like filenames - the ones that
-    matches this pattern: [/.-_], and strip unlikely characters from them -
+    matches this pattern: [/:.-_], and strip unlikely characters from them -
     ['"].
 EOF
 }
@@ -65,7 +65,7 @@ if [ -z "$1" ]; then
   exit 0
 fi
 if [ -n "$limit_to_files" ]; then
-  pager="$pager|grep '[/._-]'|sed -e \"s/[\\\`\']//g\""
+  pager="$pager|grep '[/:._-]'|sed -e \"s/[\\\`\']//g\""
 fi
 
 for terms in `xterms -l`; do
