@@ -53,14 +53,14 @@
    Alt + i
 "goto.or.error term.r"
    Alt + r
+"goto.or.error term.l"
+   Alt + l
 
 
 "goto -f term.s"
    Alt + Shift + s
 "goto -f term.a"
    Alt + Shift + a
-#"goto -f logs"
-#   Alt + Shift + l
 #"goto -f rtfm"
 #   Alt + Shift + r
 "goto -f term.v"
@@ -76,6 +76,8 @@
    Alt + Shift + i
 "goto -f term.r"
    Alt + Shift + r
+"goto -f term.l"
+   Alt + Shift + l
 
 #raise firefox (the first window)
 #"goto.or.error Firefox"

@@ -30,7 +30,8 @@
 
   my %config = (
   geometries => {
-      hilite => join('', $fw - $cw, 'x',        32, '-',   -$bs, '+', $hr),
+      hilite => join('', $fw - $cw, 'x', $fh /   2, '-', -$bs, '+', $hr),
+      lolite => join('', $fw - $cw, 'x', $fh /   2, '-', -$bs, '-',   0),
       full   => join('', $fw      , 'x', $fh - $lr, '+', -$bs, '+', $hr),
       imp    => join('', $hw      , 'x', $fh - $lr, '+', -$bs, '+', $hr),
       gran   => join('', $hw      , 'x', $fh - $lr, '-', -$bs, '+', $hr),
