@@ -1,4 +1,8 @@
 {
+  my ($root_width, $root_height, $root_x, $root_y)
+      = `xwininfo -root`
+      =~ /-geometry ([0-9]+)x([0-9]+)([+-][0-9]+)([+-][0-9]+)/;
+
   # Dejavu Sans Mono FaceSize 10 - 8x17 pixels block for each xterm character
   my $W = 17;
   my $H = 8;
