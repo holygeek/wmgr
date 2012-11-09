@@ -38,8 +38,8 @@
       rtfm   => join('', $cw      , 'x', $fh      , '-',    0, '-',   0),
       shells => join('', $cw      , 'x', $fh      , '+', -$bs, '-',   0),
       vims   => join('', $cw      , 'x', $fh      , '+',
-                          # Place it right next to shells
-                          $cw * $H + $bs, '-', 0),
+                     # Place it right next to shells
+                     $cw * $H, '-', 0),
       any    => join('',
                      # Fill up remaining space after shells and vims
                      int(($root_width - $bs) / $H) - $cw * 2,
