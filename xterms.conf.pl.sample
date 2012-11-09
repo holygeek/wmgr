@@ -42,8 +42,7 @@
                      $cw * $H, '-', 0),
       any    => join('',
                      # Fill up remaining space after shells and vims
-                     int(($root_width - $bs) / $H) - $cw * 2,
-                     'x', $fh, '-',   3, '+', $hr),
+                     $fw - $cw * 2, 'x', $fh, '-',   -1, '+', $hr),
     }
   );
 }
