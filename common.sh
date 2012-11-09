@@ -3,7 +3,7 @@ debug() {
   test -z "$debug" && return
   field="$1";
   shift
-  printf "%10s DEBUG: %12s: %s\n" "$me" "$field" "$*"
+  printf "%10s DEBUG: %12s: %s\n" "$me" "$field" "$*" >&2
 }
 
 bail() {
