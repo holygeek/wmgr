@@ -2,9 +2,26 @@
   my ($root_width, $root_height, $root_x, $root_y)
       = `xwininfo -root`
       =~ /-geometry ([0-9]+)x([0-9]+)([+-][0-9]+)([+-][0-9]+)/;
+  my $xft_metric_regex = join("\n",
+	"XFTM_ASCENT=([0-9]+);",
+	"XFTM_DESCENT=([0-9]+);",
+	"XFTM_HEIGHT=([0-9]+);",
+	"XFTM_MAX_ADVANCE=([0-9]+);",
+  );
 
-  my $H = 17;
-  my $W = 8;
+  my $font_spec = `xrdb -query`;
+  print STDERR "Could not get font_spec from xrdb\n" if ! $font_spec;
+  my ($faceName, $faceSize)
+    = $font_spec =~ /.*Term\*faceName:\s*([^\n]+)\n.*Term\*faceSize:\s*([^\n]+)\n/s;
+  print STDERR "Could not get faceName and/or faceSize\n"
+    if ! $faceName || ! $faceSize;
+
+  my $xft_metric = `xftmetric '$faceName' $faceSize`;
+  my ($XFTM_ASCENT, $XFTM_DESCENT, $XFTM_HEIGHT, $XFTM_MAX_ADVANCE)
+	  = $xft_metric =~ /$xft_metric_regex/;
+
+  my $H = $XFTM_ASCENT + $XFTM_DESCENT;
+  my $W = $XFTM_MAX_ADVANCE;
 
   # Border Size
   my $bs = 1;
