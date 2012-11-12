@@ -3,24 +3,23 @@
       = `xwininfo -root`
       =~ /-geometry ([0-9]+)x([0-9]+)([+-][0-9]+)([+-][0-9]+)/;
 
-  # Dejavu Sans Mono FaceSize 10 - 8x17 pixels block for each xterm character
-  my $W = 17;
-  my $H = 8;
+  my $H = 17;
+  my $W = 8;
 
   # Border Size
   my $bs = 1;
 
   # Full Width
-  my $fw = int($root_width / $H);
+  my $fw = int($root_width / $W);
 
   # Full Height
-  my $fh = int($root_height / $W);
+  my $fh = int($root_height / $H);
 
   # Half Width
   my $hw = $fw/2;
 
   # Head room.
-  my $hr = '+' . ($root_height % $W - $bs - $bs);
+  my $hr = '+' . ($root_height % $H - $bs - $bs);
 
   # Comfort Width
   my $cw = 86;
@@ -39,7 +38,7 @@
       shells => join('', $cw      , 'x', $fh      , '+', -$bs, '-',   0),
       vims   => join('', $cw      , 'x', $fh      , '+',
                      # Place it right next to shells
-                     $cw * $H, '-', 0),
+                     $cw * $W, '-', 0),
       any    => join('',
                      # Fill up remaining space after shells and vims
                      $fw - $cw * 2, 'x', $fh, '-',   -1, '+', $hr),
