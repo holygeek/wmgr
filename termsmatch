@@ -6,21 +6,21 @@ me=`basename $0`
 usage() {
 cat <<EOF
 DESCRIPTION
-  $me - Show matching text from all terminals that matches the BRE <base>
+  $me - Show matching text from all attached screen sessions matching BRE <base>
 SYNOPSIS
   $me [-dhnv] <base>
 OPTIONS
   -d
     Show debugging messages
 
-  -e <term_name>
-    Exclude strings from terminals that matches <term_name*>
+  -e <session_name>
+    Exclude strings from screen sessions that matches *<session_name>*
 
   -h
     Show this help message
 
   -l
-    List the origin TERM_NAME for each match shown.
+    Include screen session name in each match shown.
 
   -n
     Dry run
@@ -50,7 +50,7 @@ do
     d) debug=t;;
     e) exclude="$OPTARG";;
     h) usage ; exit;;
-    l) pager='sed -e "s/^/$terms: /"';;
+    l) pager='sed -e "s/^/$session_name: /"';;
     n) dry_run=t;;
     s) split='cat';;
     v) verbose=t;;
@@ -68,10 +68,10 @@ if [ -n "$limit_to_files" ]; then
   pager="$pager|grep '[/:._-]'|sed -e \"s/[\\\`\']//g\""
 fi
 
-for terms in `xterms -l`; do
-  case $terms in
-    ${exclude:--}*) continue ;;
+for session_name in `screen -ls|grep '(Attached)'|awk '{print $1}'`; do
+  case $session_name in
+    *${exclude}*) continue ;;
   esac
-  eval "dump $terms|$split|grep -- '$base'|$pager"
+  eval "dump $session_name|$split|grep -- '$base'|$pager"
 done | sort -u
 
