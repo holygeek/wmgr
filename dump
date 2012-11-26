@@ -9,7 +9,7 @@ USAGE
   dump [-h] [-A] <screen session>
 OPTIONS
   -A
-    Dump the scrollback buffer contets too
+    Dump the scrollback buffer contents too
 
   -c
     Use the previous 'cached' dump, do not ask screen to redump.
