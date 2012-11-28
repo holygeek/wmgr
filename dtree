@@ -1,0 +1,62 @@
+#!/usr/bin/env perl
+# Created: Wed Nov 28 12:42:28 MYT 2012
+use strict;
+use warnings;
+
+sub get_pwd {
+	my ($pid) = @_;
+	my $environ = "/proc/$pid/environ";
+	my ($pwd) = `test -r $environ && cat $environ|tr '\\000' '\\n'|grep '^PWD='` =~ m{PWD=(.*)};
+	if (! defined $pwd) {
+		return undef;
+	}
+	$pwd =~ s($ENV{HOME})(\~);
+	return $pwd;
+}
+
+sub usage {
+print <<"EOF";
+NAME
+	dpstree
+
+SYNOPSIS
+	dpstree <pid>
+	dpstree <screen session name>
+
+DESCRIPTION
+	Run pstree on given pid, annotate each process id with their current
+	directory
+EOF
+}
+
+if (! defined $ARGV[0]) {
+	usage();
+	exit 0;
+}
+
+my $pid_or_session = $ARGV[0];
+
+# If screen session name is given, get pid from screen -ls that matches the
+# session name
+my $pid = $pid_or_session;
+if ($pid_or_session !~ /^\d+$/) {
+	my $screen_ls = `screen -ls`;
+	($pid, my $session) = $screen_ls =~ m/(\d+)\.(${pid_or_session}[^\s]+)/;
+	if (! $pid) {
+		print "No screen session matchin '$pid_or_session'\n";
+		exit 1;
+	}
+	print "$pid.$session\n";
+}
+
+my $tree = `pstree -Up $pid`;
+
+my @pids = $tree =~ m{\((\d+)\)}gms;
+
+foreach my $pid (@pids) {
+	my $dir = get_pwd($pid);
+	next if ! $dir;
+	$tree =~ s{\($pid\)}{($pid\@$dir)}gms;
+}
+
+print $tree;
