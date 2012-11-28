@@ -2,6 +2,9 @@
   my ($root_width, $root_height, $root_x, $root_y)
       = `xwininfo -root`
       =~ /-geometry ([0-9]+)x([0-9]+)([+-][0-9]+)([+-][0-9]+)/;
+  if ($root_width > 1920) {
+	$root_width = 1920;
+  }
   my $xft_metric_regex = join("\n",
 	"XFTM_ASCENT=([0-9]+);",
 	"XFTM_DESCENT=([0-9]+);",
@@ -39,7 +42,7 @@
   my $hr = '+' . ($root_height % $H - $bs - $bs);
 
   # Comfort Width
-  my $cw = 86;
+  my $cw = 84;
 
   # Legroom
   my $lr = 15;
@@ -47,10 +50,11 @@
   my %config = (
   geometries => {
       hilite => join('', $fw - $cw, 'x', $fh /   2, '-', -$bs, '+', $hr),
+      kraken => join('', $fw - $cw, 'x', $fh      , '-', -$bs, '+', $hr),
       lolite => join('', $fw - $cw, 'x', $fh /   2, '-', -$bs, '-',   0),
       full   => join('', $fw      , 'x', $fh - $lr, '+', -$bs, '+', $hr),
-      imp    => join('', $hw      , 'x', $fh - $lr, '+', -$bs, '+', $hr),
-      gran   => join('', $hw      , 'x', $fh - $lr, '-', -$bs, '+', $hr),
+      gran   => join('', $hw      , 'x', $fh - $lr, '+', -$bs, '+', $hr),
+      imp    => join('', $hw      , 'x', $fh - $lr, '-', -$bs, '+', $hr),
       rtfm   => join('', $cw      , 'x', $fh      , '-',    0, '-',   0),
       shells => join('', $cw      , 'x', $fh      , '+', -$bs, '-',   0),
       vims   => join('', $cw      , 'x', $fh      , '+',
