@@ -104,7 +104,9 @@ if (defined($ARGV[0])) {
 
 foreach my $which (@torun) {
     my $cmd = $xterms->{$which};
-    print "$cmd\n";
+    my $cmd_to_print = $cmd;
+    $cmd_to_print =~ s/ -/ \\\n\t-/g;
+    print "$cmd_to_print\n";
     system("cd $ENV{HOME}; $cmd");
 }
 sleep 2; update_winid(@torun);
