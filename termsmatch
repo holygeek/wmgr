@@ -10,6 +10,9 @@ DESCRIPTION
 SYNOPSIS
   $me [-dhnv] [-c <prompt>] <base>
 OPTIONS
+  -a
+    When getting terminal ouput, strip out non-ascii characters (call dump -a)
+
   -c <prompt regex>
     Show matching commands. Commands are identified using <prompt regex>.
     To make output useful with RPROMPT, anything after and including a sequence
@@ -50,9 +53,11 @@ split="tr ' ' '\n'"
 pager=cat
 prompt=
 limit_to_files=
-while getopts c:de:fhlnsv/ opt
+ascii=
+while getopts ac:de:fhlnsv/ opt
 do
   case "$opt" in
+    a) ascii=-a;;
     c) split="grep '^$OPTARG'|sed -e 's/^$OPTARG//' -e 's/     .*//'";;
     d) debug=t;;
     e) exclude="$OPTARG";;
@@ -79,6 +84,6 @@ for session_name in `screen -ls|grep '(Attached)'|awk '{print $1}'`; do
   case $session_name in
     *${exclude}*) continue ;;
   esac
-  eval "dump $session_name|$split|grep -- '$base'|$pager"
+  eval "dump $ascii $session_name|$split|grep -- '$base'|$pager"
 done | sort -u
 
