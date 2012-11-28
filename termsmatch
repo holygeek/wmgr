@@ -8,8 +8,13 @@ cat <<EOF
 DESCRIPTION
   $me - Show matching text from all attached screen sessions matching BRE <base>
 SYNOPSIS
-  $me [-dhnv] <base>
+  $me [-dhnv] [-c <prompt>] <base>
 OPTIONS
+  -c <prompt regex>
+    Show matching commands. Commands are identified using <prompt regex>.
+    To make output useful with RPROMPT, anything after and including a sequence
+    of 2 or more spaces will be stripped out.
+
   -d
     Show debugging messages
 
@@ -43,10 +48,12 @@ exclude=
 dry_run=
 split="tr ' ' '\n'"
 pager=cat
+prompt=
 limit_to_files=
-while getopts de:fhlnsv/ opt
+while getopts c:de:fhlnsv/ opt
 do
   case "$opt" in
+    c) split="grep '^$OPTARG'|sed -e 's/^$OPTARG//' -e 's/     .*//'";;
     d) debug=t;;
     e) exclude="$OPTARG";;
     h) usage ; exit;;
