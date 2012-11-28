@@ -11,6 +11,9 @@ OPTIONS
   -A
     Dump the scrollback buffer contents too
 
+  -a
+    Dump ascii characters only (non-ascii will be replaced with space)
+
   -c
     Use the previous 'cached' dump, do not ask screen to redump.
 
@@ -23,12 +26,14 @@ OPTIONS
 #OPTIONS
 }
 
+pager=
 from_cache=
 dump_with_scrollback=
-while getopts Acdhn opt
+while getopts Aacdhn opt
 do
   case "$opt" in
     A) dump_with_scrollback=-h;;
+    a) pager="|tr -cd '[ -~\n]'";;
     d) debug=t;;
     c) from_cache=t;;
     h) usage ; exit;;
@@ -61,4 +66,4 @@ if [ -n "$dump_with_scrollback" ]; then
     sleep .01
   done
 fi
-exe cat $out
+exe cat $out $pager
