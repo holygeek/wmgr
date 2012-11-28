@@ -47,7 +47,7 @@ EOF
 }
 
 debug=
-exclude=
+exclude=' '
 dry_run=
 split="tr ' ' '\n'"
 pager=cat
