@@ -72,7 +72,7 @@ if [ -z "$1" ]; then
   exit 0
 fi
 if [ -n "$limit_to_files" ]; then
-  pager="$pager|grep '[/:._-]'|sed -e \"s/[\\\`\']//g\""
+  pager="$pager|grep '[/:._-]'|tr \"[\\\`\'()@,]\" '\\n'|grep '.'"
 fi
 
 for session_name in `screen -ls|grep '(Attached)'|awk '{print $1}'`; do
