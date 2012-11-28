@@ -51,6 +51,8 @@
    Alt + g
 "goto.or.error term.i"
    Alt + i
+"goto.or.error term.k"
+   Alt + k
 "goto.or.error term.r"
    Alt + r
 "goto.or.error term.l"
@@ -74,6 +76,8 @@
    Alt + Shift + g
 "goto -f term.i"
    Alt + Shift + i
+"goto -f term.k"
+   Alt + Shift + k
 "goto -f term.r"
    Alt + Shift + r
 "goto -f term.l"
