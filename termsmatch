@@ -11,7 +11,7 @@ SYNOPSIS
   $me [-dhnv] [-c <prompt>] <base>
 OPTIONS
   -a
-    When getting terminal ouput, strip out non-ascii characters (call dump -a)
+    When getting terminal output, strip out non-ascii characters (call dump -a)
 
   -c <prompt regex>
     Show matching commands. Commands are identified using <prompt regex>.
