@@ -30,9 +30,6 @@ DESCRIPTION
 	id with their current directory
 
 OPTIONS
-	-a
-	  Show the tree for all running screen sessions
-
 	-h
 	  Show this help message
 
@@ -42,10 +39,9 @@ EOF
 }
 
 my %opts;
-# a - all screen sessions
 # s - include parent processes too
 # p - Show process id too
-getopts("hadps", \%opts);
+getopts("hdps", \%opts);
 if (defined $opts{h}) {
 	usage();
 	exit 0;
@@ -53,14 +49,11 @@ if (defined $opts{h}) {
 my $show_parents = defined $opts{s} ? '-s' : '';
 my $show_pid = defined $opts{p};
 
-if (! defined $ARGV[0] && ! defined $opts{a}) {
-	usage();
-	exit 0;
-}
+my $all = ! defined $ARGV[0];
 
 my (@session_names, @PID_OR_SESSION);
 my %session_name_for;
-if ($opts{a}) {
+if ($all) {
 	my $lines = `screen -ls|grep '^\t'`;
 	(@PID_OR_SESSION) = $lines =~ m{\s+([0-9]+)\.[^\t]+\s}gms;
 	(@session_names) = $lines =~ m{\s+([0-9]+\.[a-z]+)\s[^\t]+\s}gms;
