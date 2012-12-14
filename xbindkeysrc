@@ -33,6 +33,9 @@
 "xbindkeys_show"
    control+shift + q
 
+"goto bigterm || bigterm"
+   Alt + p
+
 "goto.or.error term.s"
    Alt + s
 "goto.or.error term.a"
