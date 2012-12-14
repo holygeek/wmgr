@@ -98,17 +98,7 @@ my @torun;
 
 if (defined($ARGV[0])) {
   if ($ARGV[0] eq 'restart') {
-    shift @ARGV;
-    my $args = join(' ', @ARGV);
-    system("nohup sh -c '
-        killall xterm
-        while pidof xterm; do
-            sleep .2
-        done
-        sleep 1 # Avoid deadlock
-        xterms $args
-      ' > ~/wmgr/nohup.xterm.restart.log 2>&1 &");
-    exit(0);
+    restart_and_exit();
   }
 
   # Start only the given session names
@@ -259,4 +249,23 @@ sub update_winid {
         print $cmd . "\n";
         system($cmd);
     }
+}
+
+sub restart_and_exit {
+    shift @ARGV;
+    my $args = join(' ', @ARGV);
+    system(<<"    SHELL"
+        nohup sh -c '
+            echo " xterms $args"
+            killall xterm
+            while pidof xterm; do
+                sleep .2
+            done
+            rm -f $TMP_DIR/term.?.winid
+            sleep 1 # Avoid deadlock
+            xterms $args
+        ' > ~/wmgr/nohup.xterm.restart.log 2>&1 &
+    SHELL
+    );
+    exit(0);
 }
