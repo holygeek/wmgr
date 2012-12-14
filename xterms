@@ -98,14 +98,15 @@ my @torun;
 
 if (defined($ARGV[0])) {
   if ($ARGV[0] eq 'restart') {
+    shift @ARGV;
+    my $args = join(' ', @ARGV);
     system("nohup sh -c '
         killall xterm
         while pidof xterm; do
             sleep .2
         done
         sleep 1 # Avoid deadlock
-        # xterms
-        xdotool key alt+x
+        xterms $args
       ' > ~/wmgr/nohup.xterm.restart.log 2>&1 &");
     exit(0);
   }
