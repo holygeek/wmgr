@@ -34,10 +34,6 @@ fi
 echo pid: $pid
 
 eval `cat /proc/$pid/environ|tr '\000' '\n'|grep -E '^(TERM_NAME|WINDOW|SHLVL)='`
-#window=`cat /proc/$pid/environ|tr '\000' '\n'|grep 'WINDOW='`
-for v in TERM_NAME WINDOW SHLVL; do
-  eval echo $v=$`echo $v`
-done
 if [ -n "$term" ]; then
   goto term.$TERM_NAME[1]
   echo screen -d -r $TERM_NAME -X select $WINDOW
