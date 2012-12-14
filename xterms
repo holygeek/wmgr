@@ -110,12 +110,19 @@ if (defined($ARGV[0])) {
       ' > ~/wmgr/nohup.xterm.restart.log 2>&1 &");
     exit(0);
   }
-  my $which = $ARGV[0];
-  if (defined($xterms->{$which})) {
-    push @torun, $which;
-  } else {
-    usage();
-    exit(0);
+
+  # Start only the given session names
+  foreach my $which (split(/,/, $ARGV[0])) {
+    foreach my $session_name (keys %$xterms) {
+        if ($session_name =~ /^$which/) {
+            push @torun, $session_name;
+        }
+    }
+  }
+
+  if (scalar @torun == 0) {
+    print "No session matches $ARGV[0]\n";
+    exit 1;
   }
 } else {
   my $screen_status = get_screen_status();
