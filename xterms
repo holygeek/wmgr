@@ -38,6 +38,23 @@ my $geometries = get_geometries(fallback => {
 
 my $xterms = {};
 
+my ($bg, $fg) = qw/black white/;
+
+my %opts;
+# -b <background color>
+#    Set background color
+# -l
+#    List sessions
+getopts('lb:', \%opts);
+if (defined $opts{l}) {
+    print join("\n", keys %$geometries) . "\n";
+    exit 0;
+}
+if (defined $opts{b}) {
+    $bg = $opts{b};
+    $fg = ($bg eq 'white') ? 'black' : 'white';
+}
+
 foreach my $session (keys %$geometries) {
     my $executable = "$cwd/screen.$session";
     if ( not -f $executable  ) {
@@ -48,7 +65,7 @@ foreach my $session (keys %$geometries) {
     }
     my ($title) = "term.$session" =~ /(term..).*/;
 
-    $xterms->{$session} = "TERM_NAME=$session "
+    $xterms->{$session} = "TERM_NAME=$session bg=$bg fg=$fg "
 
                         # .  "xfce4-terminal "
                         # .  "gnome-terminal "
@@ -62,7 +79,7 @@ foreach my $session (keys %$geometries) {
                         # .  "--title term.$session "
                         # xterm:
                         .  "-title $title "
-                        .  "-fg white -bg black "
+                        .  "-fg $fg -bg $bg "
                         .  "-b 0 "
                         # Do not scroll window on new output
                         . "-si "
@@ -78,13 +95,6 @@ foreach my $session (keys %$geometries) {
 }
 
 my @torun;
-
-my %opts;
-getopts('l', \%opts);
-if (defined $opts{l}) {
-    print join("\n", keys %$geometries) . "\n";
-    exit 0;
-}
 
 if (defined($ARGV[0])) {
   my $which = $ARGV[0];
