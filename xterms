@@ -41,11 +41,11 @@ my $xterms = {};
 my ($bg, $fg) = qw/black white/;
 
 my %opts;
-# -b <background color>
-#    Set background color
-# -l
-#    List sessions
-getopts('lb:', \%opts);
+getopts('b:hl', \%opts);
+if (defined $opts{h}) {
+    usage();
+    exit(0);
+}
 if (defined $opts{l}) {
     print join("\n", keys %$geometries) . "\n";
     exit 0;
@@ -65,7 +65,7 @@ foreach my $session (keys %$geometries) {
     }
     my ($title) = "term.$session" =~ /(term..).*/;
 
-    $xterms->{$session} = "TERM_NAME=$session bg=$bg fg=$fg "
+    $xterms->{$session} = "TERM_NAME=$session XTERMS_BG=$bg XTERMS_FG=$fg "
 
                         # .  "xfce4-terminal "
                         # .  "gnome-terminal "
@@ -201,7 +201,40 @@ sub ok_to_run {
 }
 
 sub usage {
-  print "Usage: xterms [logs|shells|vims]\n";
+  print <<USAGE;
+NAME
+    xterms - Start a bunch of terminals
+
+SYNOPSIS
+    xterms [-h]
+    xterms [-b <background color>] [session1,session2,...]
+    xterms [-l]
+    xterms restart <options and arguments>
+
+DESCRIPTION
+    xterms starts the terminals with the geometries set in the config file
+    xterms.conf.pl
+
+    "xterms restart" restarts itself after killing all xterm terminals.
+
+    The argument [session1,session2,...] limits the terminals to be started.
+    Default is to start all terminals.
+
+OPTIONS
+    -h
+       Shows this help message
+
+    -b <background color>
+       Sets the background color. This implictly sets the foreground color too.
+       If the backgroudn color is white, the foreground color is set to black.
+       For all other backgroud color, the foreground color is set to white.
+
+       The background and foreground colors are exported as environment
+       variable XTERMS_BG and XTERMS_FG in the terminals.
+
+    -l
+       List sessions found in xterms.conf.pl
+USAGE
 }
 
 sub update_winid {
