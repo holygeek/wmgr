@@ -2,6 +2,7 @@
 # Created: Wed Nov 28 12:42:28 MYT 2012
 use strict;
 use warnings;
+use Getopt::Std;
 
 sub get_pwd {
 	my ($pid) = @_;
@@ -17,46 +18,92 @@ sub get_pwd {
 sub usage {
 print <<"EOF";
 NAME
-	dpstree
+	dtree - Show the initial \$PWD for each processes (as read from
+	        /proc/\$pid/envorin
 
 SYNOPSIS
-	dpstree <pid>
-	dpstree <screen session name>
+	dtree <pid>
+	dtree <screen session name>
 
 DESCRIPTION
-	Run pstree on given pid, annotate each process id with their current
-	directory
+	Run pstree on given pid or screen session name, annotate each process
+	id with their current directory
+
+OPTIONS
+	-a
+	  Show the tree for all running screen sessions
+
+	-h
+	  Show this help message
+
+	-s
+	  Include parent processes too
 EOF
 }
 
-if (! defined $ARGV[0]) {
+my %opts;
+# a - all screen sessions
+# s - include parent processes too
+# p - Show process id too
+getopts("hadps", \%opts);
+if (defined $opts{h}) {
+	usage();
+	exit 0;
+}
+my $show_parents = defined $opts{s} ? '-s' : '';
+my $show_pid = defined $opts{p};
+
+if (! defined $ARGV[0] && ! defined $opts{a}) {
 	usage();
 	exit 0;
 }
 
-my $pid_or_session = $ARGV[0];
+my (@session_names, @PID_OR_SESSION);
+my %session_name_for;
+if ($opts{a}) {
+	my $lines = `screen -ls|grep '^\t'`;
+	(@PID_OR_SESSION) = $lines =~ m{\s+([0-9]+)\.[^\t]+\s}gms;
+	(@session_names) = $lines =~ m{\s+([0-9]+\.[a-z]+)\s[^\t]+\s}gms;
+	%session_name_for = map { split /\./ } @session_names;
+} else {
+	@PID_OR_SESSION = @ARGV;
+}
 
-# If screen session name is given, get pid from screen -ls that matches the
-# session name
-my $pid = $pid_or_session;
-if ($pid_or_session !~ /^\d+$/) {
-	my $screen_ls = `screen -ls`;
-	($pid, my $session) = $screen_ls =~ m/(\d+)\.(${pid_or_session}[^\s]+)/;
-	if (! $pid) {
-		print "No screen session matchin '$pid_or_session'\n";
-		exit 1;
+my @output;
+my %dirs;
+foreach my $pid_or_session (@PID_OR_SESSION) {
+	# If screen session name is given, get pid from screen -ls that matches
+	# the session name
+	my $output = '';
+	my $pid = $pid_or_session;
+	if ($pid_or_session !~ /^\d+$/) {
+		my $screen_ls = `screen -ls`;
+		($pid, my $session) = $screen_ls =~ m/(\d+)\.(${pid_or_session}[^\s]*)/;
+		if (! $pid) {
+			print "No screen session matching '$pid_or_session'\n";
+			exit 1;
+		}
+		$output .= "$pid.$session\n";
 	}
-	print "$pid.$session\n";
+
+	my $tree = `pstree $show_parents -Up $pid`;
+	foreach my $pid (keys %session_name_for) {
+		$tree =~ s/\($pid\)/($pid.$session_name_for{$pid})/;
+	}
+
+	my @pids = $tree =~ m{\((\d+)\)}gms;
+
+	foreach my $pid (@pids) {
+		my $dir = get_pwd($pid);
+		next if ! $dir;
+		my $replacement = "($dir)";
+		if ($show_pid) {
+			$replacement = "($pid\@$dir)";
+		}
+		$tree =~ s{\($pid\)}{$replacement}gms;
+	}
+
+	$output .= $tree;
+	push @output, $output;
 }
-
-my $tree = `pstree -Up $pid`;
-
-my @pids = $tree =~ m{\((\d+)\)}gms;
-
-foreach my $pid (@pids) {
-	my $dir = get_pwd($pid);
-	next if ! $dir;
-	$tree =~ s{\($pid\)}{($pid\@$dir)}gms;
-}
-
-print $tree;
+print join("\n", @output);
