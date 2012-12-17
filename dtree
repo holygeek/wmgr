@@ -6,6 +6,14 @@ use Getopt::Std;
 
 sub get_pwd {
 	my ($pid) = @_;
+	my $shell_cwd = "/dev/shm/$pid.cwd";
+	if ( -f $shell_cwd ) {
+		open my $f, '<', $shell_cwd or die "Could not open $shell_cwd: $!";
+		my $cwd = <$f>;
+		chomp $cwd;
+		close $f;
+		return $cwd;
+	}
 	my $environ = "/proc/$pid/environ";
 	my ($pwd) = `test -r $environ && cat $environ|tr '\\000' '\\n'|grep '^PWD='` =~ m{PWD=(.*)};
 	if (! defined $pwd) {
