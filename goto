@@ -44,6 +44,16 @@ sub verbose {
   print $text;
 }
 
+sub readline_and_chomp {
+  my ($filename) = @_;
+  open my $fd, '<', $filename or die "$filename: $!";
+  my $line = <$fd>;
+  close $fd;
+
+  chomp $line;
+  return $line;
+}
+
 my $arg = $ARGV[0];
 
 my $currently_focused_windowid=`currwin`;
@@ -62,7 +72,7 @@ if ($arg =~ /[0-9]+/) {
 	}
 } elsif (-f "$TMP_DIR/$arg.winid") {
         verbose "via $TMP_DIR/$arg.winid\n";
-        my $window_id = `cat $TMP_DIR/$arg.winid`;
+        my $window_id = readline_and_chomp("$TMP_DIR/$arg.winid");
         chomp $window_id;
         raise_window($window_id);
         # if ($opts{f}) {
@@ -114,7 +124,7 @@ sub raise_window {
 }
 
 sub raise_previous_window {
-	my $oldwin = `cat $TMP_DIR/oldwin`;
+	my $oldwin = readline_and_chomp("$TMP_DIR/oldwin");
 	old_window_is($currently_focused_windowid);
 	return system("wmctrl -i -a $oldwin; xdotool windowfocus $oldwin");
 }
