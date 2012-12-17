@@ -41,7 +41,7 @@ my $xterms = {};
 my ($bg, $fg) = qw/black white/;
 
 my %opts;
-getopts('b:hl', \%opts);
+getopts('b:hl', \%opts) or do { usage(); exit 1; };
 if (defined $opts{h}) {
     usage();
     exit(0);
