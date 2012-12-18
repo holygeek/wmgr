@@ -38,8 +38,14 @@ DESCRIPTION
 	id with their current directory
 
 OPTIONS
+	-H <pattern>
+	  Highlight <pattern>
+
 	-h
 	  Show this help message
+
+	-p
+	  Show the process id
 
 	-s
 	  Include parent processes too
@@ -49,13 +55,14 @@ EOF
 my %opts;
 # s - include parent processes too
 # p - Show process id too
-getopts("hdps", \%opts);
+getopts("H:hps", \%opts) or do { usage(); exit 1 };
 if (defined $opts{h}) {
 	usage();
 	exit 0;
 }
 my $show_parents = defined $opts{s} ? '-s' : '';
 my $show_pid = defined $opts{p};
+my $opt_highlight = $opts{H};
 
 my $all = ! defined $ARGV[0];
 
@@ -97,14 +104,18 @@ foreach my $pid_or_session (@PID_OR_SESSION) {
 	foreach my $pid (@pids) {
 		my $dir = get_pwd($pid);
 		next if ! $dir;
-		my $replacement = "($dir)";
+		my $replacement = "$dir";
 		if ($show_pid) {
-			$replacement = "($pid\@$dir)";
+			$replacement = "$pid\@$dir";
 		}
-		$tree =~ s{\($pid\)}{$replacement}gms;
+		$tree =~ s{\($pid\)}{($replacement)}gms;
 	}
 
 	$output .= $tree;
 	push @output, $output;
 }
-print join("\n", @output);
+my $output = join("\n", @output);
+if ($opt_highlight) {
+	$output =~ s<($opt_highlight)><\e[33;1m$1\e[0m>gms;
+}
+print $output;
