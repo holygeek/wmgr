@@ -95,8 +95,19 @@ foreach my $pid_or_session (@PID_OR_SESSION) {
 	}
 
 	my $tree = `pstree $show_parents -Up $pid`;
+	my $replaced = 0;
+	my $len = 0;
 	foreach my $pid (keys %session_name_for) {
-		$tree =~ s/\($pid\)/($pid.$session_name_for{$pid})/;
+		my $session_name = $session_name_for{$pid};
+		if ($tree =~ /\($pid\)/gms) {
+			$len = length($session_name) + 1; # plus dot
+			$tree =~ s/\($pid\)/($pid.$session_name)/;
+			$replaced = 1;
+			last;
+		}
+	}
+	if ($replaced) {
+		$tree =~ s/^ /' ' . (' ' x $len)/gmse;
 	}
 
 	my @pids = $tree =~ m{\((\d+)\)}gms;
