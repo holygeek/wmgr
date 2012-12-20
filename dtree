@@ -12,7 +12,8 @@ sub get_pwd {
 		my $cwd = <$f>;
 		chomp $cwd;
 		close $f;
-		return $cwd;
+                # Authoritative - color it green
+		return "\e[32m$cwd\e[0m";
 	}
 	my $environ = "/proc/$pid/environ";
 	my ($pwd) = `test -r $environ && cat $environ|tr '\\000' '\\n'|grep '^PWD='` =~ m{PWD=(.*)};
@@ -115,7 +116,7 @@ foreach my $pid_or_session (@PID_OR_SESSION) {
 	foreach my $pid (@pids) {
 		my $dir = get_pwd($pid);
 		next if ! $dir;
-		my $replacement = "$dir";
+		my $replacement = $dir;
 		if ($show_pid) {
 			$replacement = "$pid\@$dir";
 		}
