@@ -96,6 +96,10 @@ foreach my $pid_or_session (@PID_OR_SESSION) {
 	}
 
 	my $tree = `pstree $show_parents -Up $pid`;
+	if ($opt_highlight) {
+		# Highlight name of processes if requested
+		$tree =~ s<($opt_highlight)><\e[31;1m$1\e[0m>gms;
+	}
 	my $replaced = 0;
 	my $len = 0;
 	foreach my $pid (keys %session_name_for) {
@@ -127,7 +131,4 @@ foreach my $pid_or_session (@PID_OR_SESSION) {
 	push @output, $output;
 }
 my $output = join("\n", @output);
-if ($opt_highlight) {
-	$output =~ s<($opt_highlight)><\e[33;1m$1\e[0m>gms;
-}
 print $output;
