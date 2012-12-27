@@ -12,6 +12,7 @@ sub get_pwd {
 		my $cwd = <$f>;
 		chomp $cwd;
 		close $f;
+		$cwd =~ s:$ENV{HOME}:~:;
                 # Authoritative - color it green
 		return "\e[32m$cwd\e[0m";
 	}
