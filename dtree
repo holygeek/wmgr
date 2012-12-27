@@ -7,6 +7,8 @@ use Getopt::Std;
 sub get_pwd {
 	my ($pid) = @_;
 	my $shell_cwd = "/dev/shm/$pid.cwd";
+	my $pwd;
+
 	if ( -f $shell_cwd ) {
 		open my $f, '<', $shell_cwd or die "Could not open $shell_cwd: $!";
 		my $cwd = <$f>;
@@ -14,14 +16,15 @@ sub get_pwd {
 		close $f;
 		$cwd =~ s:$ENV{HOME}:~:;
                 # Authoritative - color it green
-		return "\e[32m$cwd\e[0m";
+		$pwd = "\e[32m$cwd\e[0m";
+	} else {
+		my $environ = "/proc/$pid/environ";
+		($pwd) = `test -r $environ && cat $environ|tr '\\000' '\\n'|grep '^PWD='` =~ m{PWD=(.*)};
+		if (! defined $pwd) {
+			return undef;
+		}
+		$pwd =~ s($ENV{HOME})(\~);
 	}
-	my $environ = "/proc/$pid/environ";
-	my ($pwd) = `test -r $environ && cat $environ|tr '\\000' '\\n'|grep '^PWD='` =~ m{PWD=(.*)};
-	if (! defined $pwd) {
-		return undef;
-	}
-	$pwd =~ s($ENV{HOME})(\~);
 	return $pwd;
 }
 
