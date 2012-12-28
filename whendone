@@ -1,0 +1,57 @@
+#!/bin/sh
+# Created: Fri Dec 28 12:16:12 MYT 2012
+
+. `dirname $0`/common.sh
+
+me=`basename $0`
+usage() {
+cat <<EOF
+NAME
+  $me - wait for given term for a ready shell prompt
+
+SYNOPSIS
+  $me [-hv] [-i N]
+
+DESCRIPTION
+
+OPTIONS
+  -h
+    Show this help message
+
+  -i N
+    Wait N seconds between checks. Default is 3. (N could be anything that
+    sleep(1) understands)
+
+  -v
+    Verbose output
+EOF
+}
+
+debug=
+dry_run=
+interval=3
+while getopts hi:v opt
+do
+  case "$opt" in
+    h) usage ; exit;;
+    i) interval="$OPTARG";;
+    v) verbose=t;;
+    \?) echo Unknown option ; exit;;
+  esac
+done
+shift $(($OPTIND -1))
+
+if [ -z "$1" ]; then
+	usage
+	exit 1
+fi
+
+if ! xterms -l|grep -q $1; then
+	echo "Term session $1 does not exist"
+	exit 1;
+fi
+
+while ! dump $1|tail -1|grep -q '^% '; do
+	sleep $interval
+done
+
