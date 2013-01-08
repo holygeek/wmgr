@@ -41,7 +41,11 @@ my $xterms = {};
 my ($bg, $fg) = qw/black white/;
 
 my %opts;
-getopts('b:hl', \%opts) or do { usage(); exit 1; };
+getopts('b:ehl', \%opts) or do { usage(); exit 1; };
+if (defined $opts{e}) {
+    system("vim ~/wmgr/xterms.conf.pl");
+    exit(0);
+}
 if (defined $opts{h}) {
     usage();
     exit(0);
@@ -199,6 +203,7 @@ SYNOPSIS
     xterms [-h]
     xterms [-b <background color>] [session1,session2,...]
     xterms [-l]
+    xterms [-e]
     xterms restart <options and arguments>
 
 DESCRIPTION
@@ -221,6 +226,9 @@ OPTIONS
 
        The background and foreground colors are exported as environment
        variable XTERMS_BG and XTERMS_FG in the terminals.
+
+    -e
+       Edits the configuration file xterms.pl.conf
 
     -l
        List sessions found in xterms.conf.pl
