@@ -10,7 +10,7 @@ NAME
   $me - wait for given term for a ready shell prompt
 
 SYNOPSIS
-  $me [-hv] [-i N]
+  $me [-hv] [-i N] <session name>
 
 DESCRIPTION
 
