@@ -1,0 +1,72 @@
+#!/bin/sh
+# Created: Fri Nov 23 10:38:13 MYT 2012
+. `dirname $0`/common.sh
+
+me=`basename $0`
+usage() {
+cat <<EOF
+NAME
+  $me - Change root window background using xsetroot
+
+SYNOPSIS
+  $me [-dhnv] <color>
+  $me [-dhnv] -s <delay> -r <repeat> <color1> <color2> ...
+
+DESCRIPTION
+
+OPTIONS
+  -a <delay> -r <repeat> <color1> <color2> ...
+    Alternate between the colors, waiting <delay> seconds in
+    between, repeated until <repeat> cycles.
+
+  -d
+    Show debugging messages
+
+  -h
+    Show this help message
+
+  -n
+    Dry run
+
+  -v
+    Verbose output
+EOF
+}
+
+delay=
+repeat=
+debug=
+dry_run=
+while getopts a:dfhknr:v opt
+do
+  case "$opt" in
+    a) delay="$OPTARG";;
+    d) debug=t;;
+    h) usage ; exit;;
+    k) killall -9 root; root white;;
+    n) dry_run=t;;
+    r) repeat="$OPTARG";;
+    v) verbose=t;;
+    \?) echo Unknown option ; exit;;
+  esac
+done
+shift $(($OPTIND -1))
+
+export DISPLAY=:0 
+color=${1:-white}
+if [ $# -le 1 ]; then
+	# root
+	# root <color>
+	xsetroot -solid "$color"
+elif [ $# -ge 2 ]; then
+	# root -a <delay> -r <repeat> <color1> <color2> ...
+	for i in `seq 1 $repeat`; do
+		for color in $*; do
+			xsetroot -solid $color
+			sleep $delay
+		done
+	done
+else
+	usage
+	exit 1
+fi
