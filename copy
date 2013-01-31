@@ -1,0 +1,9 @@
+#!/bin/sh
+# copy
+# Created: Wed Sep  5 08:46:33 MYT 2012
+
+if [ -n "$1" ]; then
+  xclip -i -selection clipboard
+else
+  xclip -o|xclip -i -selection clipboard
+fi
