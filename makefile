@@ -1,20 +1,35 @@
-
 scripts=$(shell find . -maxdepth 1 -type f -perm /100|sed -e 's,\./,,')
-pwd = $(shell readlink -e `pwd`)
 
 install:
 	@for s in $(scripts); do \
-	  target=~/bin/$$s; \
-	  if [ -e $$target -a ! -L $$target ]; then \
-	    echo "x   $$target already exists, and it's not a symlink?"; \
+	  symlink=~/bin/$$s; \
+	  target=$(PWD)/$$s; \
+	  if [ -e $$symlink -a ! -L $$symlink ]; then \
+	    echo "x   not a symlink: $$symlink"; \
 	    continue; \
 	  fi; \
-	  if [ -L $$target ]; then \
-	    if [ "`readlink -e $$target`" != "$(pwd)/$$s" ]; then \
-	      echo "x   `file $$target`"; \
+	  if [ -L $$symlink ]; then \
+	    if [ "`readlink -e $$symlink`" = "$$target" ]; then \
+	      echo "✓   $$symlink"; \
+	    else \
+	      echo "x   `file $$symlink`"; \
 	    fi; \
 	  else \
-	    echo "✓   ln -s $(pwd)/$$s $$target"; \
-	    ln -s $(pwd)/$$s $$target; \
+	    echo "✓   ln -s $$target $$symlink"; \
+	    ln -s $$target $$symlink; \
+	  fi; \
+	done
+
+uninstall:
+	@for s in $(scripts); do \
+	  symlink=~/bin/$$s; \
+	  target=$(PWD)/$$s; \
+	  if [ -L $$symlink ]; then \
+	    if [ "`readlink -e $$symlink`" = "$$target" ]; then \
+	      echo "✓   removing: $$symlink"; \
+	      rm -f $$symlink; \
+	    else \
+	      echo "x   left alone: $$symlink"; \
+	    fi; \
 	  fi; \
 	done
