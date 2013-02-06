@@ -51,6 +51,7 @@
   geometries => {
       hilite => join('', $fw - $cw, 'x', $fh /   2, '-', -$bs, '+', $hr),
       kraken => join('', $fw - $cw, 'x', $fh      , '-', -$bs, '+', $hr),
+      mermaid=> join('', 2 *   $cw, 'x', $fh      , '+', -$bs, '+', $hr),
       lolite => join('', $fw - $cw, 'x', $fh /   2, '-', -$bs, '-',   0),
       full   => join('', $fw      , 'x', $fh - $lr, '+', -$bs, '+', $hr),
       gran   => join('', $hw      , 'x', $fh - $lr, '+', -$bs, '+', $hr),
