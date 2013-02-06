@@ -67,10 +67,11 @@ foreach my $session (keys %$geometries) {
         #       "Its content should be somewhat like this:\n".
         #       "screen -DR man\n";
     }
-    my ($title) = "term.$session" =~ /(term..).*/;
+    my ($first_letter) = $session =~ /(.).*/;
+    my ($title) = "term.$first_letter";
 
-    $xterms->{$session} = "TERM_NAME=$session XTERMS_BG=$bg XTERMS_FG=$fg "
-
+    $xterms->{$session} = "TERM_NAME=$session SHORT_TERM_NAME=$first_letter "
+                        . "XTERMS_BG=$bg XTERMS_FG=$fg "
                         # .  "xfce4-terminal "
                         # .  "gnome-terminal "
                         # .  "rxvt-unicode "
