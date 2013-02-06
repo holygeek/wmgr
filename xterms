@@ -51,7 +51,14 @@ if (defined $opts{h}) {
     exit(0);
 }
 if (defined $opts{l}) {
-    print join("\n", keys %$geometries) . "\n";
+    my @screens = `screen -ls`;
+    @screens = map { /^\t/ && do { $_ =~ s/.*\.//; $_ } } @screens;
+    #my %screens = map { my ($name, $status)
+    #                    = $_ =~ /\.([^ ]+).*\(([.*])\)$/; ($name, $status) }
+    #                    @screens;
+    print join("\n", sort keys %$geometries) . "\n";
+    print "===\n";
+    print join('', sort @screens) . "\n";
     exit 0;
 }
 if (defined $opts{b}) {
