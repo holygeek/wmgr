@@ -111,6 +111,10 @@ my @torun;
 if (defined($ARGV[0])) {
   if ($ARGV[0] eq 'restart') {
     restart_and_exit();
+  } elsif ($ARGV[0] eq 'stop') {
+    restart_and_exit('exit');
+  } elsif ($ARGV[0] eq 'repos') {
+    print "Todo: resposition xterms windows\n";
   }
 
   # Start only the given session names
@@ -267,6 +271,9 @@ sub update_winid {
 }
 
 sub restart_and_exit {
+    my ($quit) = @_;
+    $quit ||= '';
+
     shift @ARGV;
     my $args = join(' ', @ARGV);
     system(<<"    SHELL"
