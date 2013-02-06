@@ -12,8 +12,8 @@ use File::Slurp;
 qx/screen -wipe/;
 
 my $TMP_DIR = '/dev/shm';
-my $cwd = dirname(__FILE__);
 my $geom = qx/xrandr | grep '\*'/;
+my $wmgr_home = get_wmgr_home();
 
 my $two_screen_width = 3360;
 my $offset_x = 0;
@@ -60,7 +60,7 @@ if (defined $opts{b}) {
 }
 
 foreach my $session (keys %$geometries) {
-    my $executable = "$cwd/screen.$session";
+    my $executable = "$wmgr_home/screen.$session";
     if ( not -f $executable  ) {
         $executable = "screen -DR $session";
         # croak "The file screen.$executable does not exist.\n".
@@ -135,9 +135,9 @@ foreach my $which (@torun) {
 }
 sleep 2; update_winid(@torun);
 #`(sleep 4 && cwd=$cwd $cwd/xterms.seticons.sh )&`;
-`cwd=$cwd $cwd/xterms.seticons.sh &`;
+`cwd=$wmgr_home $wmgr_home/xterms.seticons.sh &`;
 
-system("if ps -ef|grep xbindkeys|grep -q -v grep; then :; else  $cwd/xbind; fi");
+system("if ps -ef|grep xbindkeys|grep -q -v grep; then :; else $wmgr_home/xbind; fi");
 
 sub get_geometries {
     my ($dummy, $fallback) = @_;
@@ -148,8 +148,7 @@ sub get_geometries {
 sub get_config {
     my ($entry) = @_;
 
-    my $medir = dirname(__FILE__);
-    my $conf_file = "$medir/xterms.conf.pl";
+    my $conf_file = "$wmgr_home/xterms.conf.pl";
     if (! -f $conf_file) {
         return undef;
     }
@@ -271,9 +270,17 @@ sub restart_and_exit {
             done
             rm -f $TMP_DIR/term.?.winid
             sleep 1 # Avoid deadlock
+            $quit
             xterms $args
         ' > ~/wmgr/nohup.xterm.restart.log 2>&1 &
     SHELL
     );
     exit(0);
+}
+
+sub get_wmgr_home {
+    my $cmd = 'readlink -e ' . __FILE__;
+    my $path = qx/$cmd/;
+    chomp $path;
+    return dirname($path);
 }
