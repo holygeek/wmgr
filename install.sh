@@ -31,7 +31,7 @@ make_symlink() {
 for s in $scripts; do
   make_symlink ~/bin/$s $s
 done
-make_symlink ~/.xinbkeysrc xbindkeysrc
+make_symlink ~/.xbindkeysrc xbindkeysrc
 
 # Symlink openbox config files
 openbox_dir=~/.config/openbox

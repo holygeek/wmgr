@@ -100,6 +100,8 @@
    Alt + Shift + r
 "goto -f term.l"
    Alt + Shift + l
+"goto -f term.m"
+   Alt + Shift + m
 
 #raise firefox (the first window)
 #"goto.or.error Firefox"
@@ -123,7 +125,10 @@
 "cycle term_index term\\."
 	Alt + n
 
-"~/bin/xterms"
+"prevterm"
+	Alt + p
+
+"xterms"
 	Alt + x
 
 "cycle browsers '(Google Chrom|Opera|Firefox)'"
