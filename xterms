@@ -315,7 +315,7 @@ sub restart_and_exit {
             sleep 1 # Avoid deadlock
             $quit
             xterms $args
-        ' > ~/wmgr/nohup.xterm.restart.log 2>&1 &
+        ' > $wmgr_home/nohup.xterm.restart.log 2>&1 &
     SHELL
     );
     exit(0);
