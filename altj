@@ -13,7 +13,7 @@
 
 exclude=term\.
 currwin=`currwin`
-windowlist=`wmctrl -l|grep -v ' -1 '|cut -f 5- -d' '|grep -v $exclude`
+windowlist=`goto|grep -v "$exclude"|tr '\t' ' '|cut -d' ' -f 1,6-`
 if [ -z "$windowlist" ]; then
   exit
 fi
@@ -22,7 +22,8 @@ echo nwindows=$nwindows
 title=`echo "$windowlist"|dmenu -l $nwindows`
 if [ -n "$title" ]; then
 	#wmctrl -a "$title"
-	goto "$title"
+	n=`echo $title|awk '{print $1}'`
+	goto $n
 else
   echo wmctrl -a $currwin
 fi
