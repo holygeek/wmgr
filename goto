@@ -85,8 +85,8 @@ if ($arg =~ /[0-9]+/) {
         exit 0
         #print 'huha';
 } else {
-	verbose "via regex /$arg/\n";
-	my $pattern = qr/$arg/;
+	verbose "via pattern /$arg/\n";
+	my $pattern = qr/\Q$arg\E/;
 	verbose "raise window whose title matches this regex: $pattern\n";
 	open WINDOWS, "wmctrl -l|" or croak "Could not run wmctrl";
 	while(<WINDOWS>) {
