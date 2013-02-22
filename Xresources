@@ -7,3 +7,6 @@ BigTerm*faceName: DejaVu Sans Mono
 BigTerm*faceSize: 14
 BigTerm*titeInhibit: true
 BigTerm*color4: light sky blue
+
+XTerm*faceName: DejaVu Sans Mono
+XTerm*faceSize: 10
