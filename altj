@@ -19,7 +19,7 @@ if [ -z "$windowlist" ]; then
 fi
 nwindows=`echo "$windowlist"|wc -l`
 echo nwindows=$nwindows
-title=`echo "$windowlist"|dmenu -l $nwindows`
+title=`echo "$windowlist"|dmenu -sb '#5c5cff' -l $nwindows`
 if [ -n "$title" ]; then
 	#wmctrl -a "$title"
 	n=`echo $title|awk '{print $1}'`
