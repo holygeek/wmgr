@@ -63,6 +63,8 @@
    Alt + r
 "goto.or.error term.l"
    Alt + l
+"goto.or.error term.m"
+   Alt + m
 
 
 "goto -f term.s"
@@ -112,7 +114,7 @@
 "goto.or.error full"
 	Alt + f
 
-"$HOME/wmgr/cycle term_index term\\."
+"cycle term_index term\\."
 	Alt + n
 
 "prevterm"
@@ -144,7 +146,8 @@
 #	Control + F12
 #"mpc next"
 #	Pause
-"killall -9 xclick || xclick"
+# "killall -9 xclick || xclick"
+"copy"
 	Alt + c
 
 #"mpc volume -5"
