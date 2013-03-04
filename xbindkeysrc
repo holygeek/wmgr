@@ -120,7 +120,7 @@
 "prevterm"
 	Alt + p
 
-"$HOME/wmgr/xterms"
+"~/bin/xterms"
 	Alt + x
 
 "cycle browsers '(Google Chrom|Opera|Firefox)'"
