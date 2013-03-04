@@ -123,9 +123,7 @@
 "$HOME/wmgr/xterms"
 	Alt + x
 
-#"browsers"
-#	Alt + b
-"wmctrl -a Chrome"
+"cycle browsers '(Google Chrom|Opera|Firefox)'"
 	Alt + b
 
 #"xmag.sh"
