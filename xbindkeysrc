@@ -126,6 +126,9 @@
 "cycle browsers '(Google Chrom|Opera|Firefox)'"
 	Alt + b
 
+"cycle -v others '(Google Chrom|Opera|Firefox|term\.)'"
+	Alt + o
+
 #"xmag.sh"
 #	Alt + z
 
