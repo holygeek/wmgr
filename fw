@@ -1,40 +1,49 @@
 #!/bin/zsh
 # fw - find out in which terminal vim is holding the swap file hostage
 # Created: Mon Sep 10 15:42:03 MYT 2012
+me=`basename $0`
 
 usage() {
   echo "USAGE
-  fw [pid]
+  fw [pid|command]
+
 DESCRIPTION
-  show from which term.* <pid> is running from.
+  show from which term.* [pid|command] is running from.
 "
 }
 
+pid=$1
 if [ -z "$pid" ]; then
-  for term in `xterms -l`; do
+  # Default behavior:
+  # Search for vim's E325 message through all screen sessions
+  for term in `screen -ls|grep '^\s[0-9]\+\.'|awk '{print $1}'`; do
     pid=`dump $term|grep 'process ID: [0-9][0-9]* (still running)'|sed -e 's/.*: \([0-9]\+\) .*/\1/'`
     if [ -n "$pid" ]; then
       break
     fi
   done
-
-  if [ -z "$pid" ]; then
-    pid=$1
-  fi
-fi
-
-if [ -z "$pid" ]; then
-  pid=`xclip -o`
 fi
 
 if [ -z "$pid" ]; then
   usage
   exit 1
 fi
-echo pid: $pid
 
+case $1 in
+	  # Select the newest process
+  [a-z]*)
+    pid=`pgrep -n $1`
+    if [ -z "$pid" ]; then
+      echo "$me: No such task: $1"
+      exit 1
+    fi
+  ;;
+esac
+
+# echo pid: $pid
+TERM_NAME=
 eval `cat /proc/$pid/environ|tr '\000' '\n'|grep -E '^(TERM_NAME|WINDOW|SHLVL)='`
-if [ -n "$term" ]; then
+if [ -n "$TERM_NAME" ]; then
   goto term.$TERM_NAME[1]
   echo screen -d -r $TERM_NAME -X select $WINDOW
   screen -d -r $TERM_NAME -X select $WINDOW
