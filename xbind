@@ -5,18 +5,17 @@
 if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
 	DISPLAY=:0 zenity --info --text "No dbus session bus address"
 fi
-if [ "x$1" = "x-e" ]; then
-	vi ~/.xbindkeysrc
-elif [ "x$1" = "x-c" ]; then
-	cat ~/.xbindkeysrc
-elif [ "x$1" = "x-p" ]; then
-	# xbind -p 'pattern'
-	grep -B 1 "$2$" ~/.xbindkeysrc
-elif [ "x$1" = "x-k" ]; then
-	killall -9 xbindkeys
-else
-	if ps -C xbindkeys > /dev/null; then
-	killall -9 xbindkeys 
-	fi
-	xbindkeys
-fi
+
+case $1 in
+  -e) vi ~/.xbindkeysrc ;;
+  -c) cat ~/.xbindkeysrc ;;
+  # xbind -p 'pattern'
+  -p) grep -B 1 "$2$" ~/.xbindkeysrc ;;
+  -k) killall -9 xbindkeys ;;
+  *)
+    if ps -C xbindkeys > /dev/null; then
+      killall -9 xbindkeys
+    fi
+    xbindkeys
+    ;;
+esac
