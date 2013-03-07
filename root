@@ -2,6 +2,14 @@
 # Created: Fri Nov 23 10:38:13 MYT 2012
 . `dirname $0`/common.sh
 
+bg_default=white
+
+trapped() {
+  xsetroot -solid $bg_default
+  exit
+}
+trap trapped INT TERM
+
 me=`basename $0`
 usage() {
 cat <<EOF
@@ -43,7 +51,7 @@ do
     a) delay="$OPTARG";;
     d) debug=t;;
     h) usage ; exit;;
-    k) killall -9 root; root white;;
+    k) pid=$$; pids=`pgrep root|grep -v $pid`;test -n "$pids" && kill -9 $pids;;
     n) dry_run=t;;
     r) repeat="$OPTARG";;
     v) verbose=t;;
@@ -53,7 +61,7 @@ done
 shift $(($OPTIND -1))
 
 export DISPLAY=:0 
-color=${1:-white}
+color=${1:-$bg_default}
 if [ $# -le 1 ]; then
 	# root
 	# root <color>
