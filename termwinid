@@ -1,0 +1,68 @@
+#!/bin/sh
+
+. `dirname $0`/common.sh
+
+me=`basename $0`
+usage() {
+cat <<EOF
+NAME
+  $me - Show xterm window id running screen
+
+SYNOPSIS
+  $me [-dhnv] [screen session name]
+
+DESCRIPTION
+
+OPTIONS
+  -D
+    Show window id in decimal format
+
+  -d
+    Show debugging messages
+
+  -h
+    Show this help message
+
+  -n
+    Dry run
+
+  -v
+    Verbose output
+EOF
+}
+
+debug=
+dry_run=
+decimal=
+hide_name=
+while getopts DdfHhnv opt
+do
+  case "$opt" in
+    D) decimal=t;;
+    d) debug=t;;
+    H) hide_name=t;;
+    h) usage ; exit;;
+    n) dry_run=t;;
+    v) verbose=t;;
+    \?) echo Unknown option ; exit;;
+  esac
+done
+shift $(($OPTIND -1))
+
+name=${1:-.} 
+export name decimal hide_name
+exe '
+screen -ls|grep "(Attached)"|awk "{print \$1 }"|awk -F . "{print \$2}" |
+  grep "^$name" |
+  while read term_name; do
+    short_name=`echo $term_name|sed -e "s/\(.\).*/\1/"`
+    window_id=`xwininfo -name term.$short_name|awk "/Window id:/ { print \\$4 }"`
+    if [ -n "$decimal" ]; then
+    	window_id=`{ echo ibase=16\;;echo $window_id|sed -e "s/0x//"|tr "a-z" "A-Z"; }|bc`
+    fi
+    if [ -z "$hide_name" ]; then
+    echo -n "term.$short_name "
+    fi
+    echo $window_id
+  done
+'
