@@ -1,0 +1,4 @@
+#!/bin/sh
+# Get the pid of xterm with title set to term.$1
+
+ps -ef|grep "[t]itle term.$1"|awk '{print $2}'
