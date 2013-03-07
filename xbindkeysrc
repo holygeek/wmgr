@@ -120,9 +120,6 @@
 "cycle term_index term\\."
 	Alt + n
 
-"prevterm"
-	Alt + p
-
 "~/bin/xterms"
 	Alt + x
 
