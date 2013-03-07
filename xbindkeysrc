@@ -36,6 +36,9 @@
 "xbindkeys_show"
    control+shift + q
 
+"goto gitk"
+   Alt + t
+
 "goto bigterm || bigterm"
    Alt + p
 
