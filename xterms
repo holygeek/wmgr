@@ -38,7 +38,19 @@ my $geometries = get_geometries(fallback => {
 
 my $xterms = {};
 
-my ($bg, $fg) = qw/black white/;
+# Solarized light/dark background
+my $bg_light = '#fdf6e3';
+my $bg_dark = '#002b36';
+
+my ($bg, $fg, $xrdb_resource);
+if (int(rand(10)) % 2) {
+    $bg = $bg_light;
+    $xrdb_resource = '~/.Xresource.light';
+} else {
+    $bg = $bg_dark;
+    $xrdb_resource = '~/.Xresource.dark';
+}
+qx{xrdb $xrdb_resource};
 
 my %opts;
 getopts('b:ehl', \%opts) or do { usage(); exit 1; };
@@ -65,7 +77,13 @@ if (defined $opts{l}) {
 }
 if (defined $opts{b}) {
     $bg = $opts{b};
-    $fg = ($bg eq 'white') ? 'black' : 'white';
+}
+if ($bg eq 'white') { $fg = 'black'; }
+elsif ($bg eq 'black') { $fg = 'white'; }
+elsif ($bg eq '#fdf6e3') { $fg = 'black'; }
+elsif ($bg eq '#002b36') { $fg = 'white'; }
+else {
+    die "Invalid background color: '$bg'";
 }
 
 foreach my $session (keys %$geometries) {
@@ -80,7 +98,7 @@ foreach my $session (keys %$geometries) {
     my ($title) = "term.$first_letter";
 
     $xterms->{$session} = "TERM_NAME=$session SHORT_TERM_NAME=$first_letter "
-                        . "XTERMS_BG=$bg XTERMS_FG=$fg "
+                        . "XTERMS_BG=\\$bg XTERMS_FG=\\$fg "
                         # .  "xfce4-terminal "
                         # .  "gnome-terminal "
                         # .  "rxvt-unicode "
@@ -93,7 +111,7 @@ foreach my $session (keys %$geometries) {
                         # .  "--title term.$session "
                         # xterm:
                         .  "-title $title "
-                        .  "-fg $fg -bg $bg "
+                        .  "-fg $fg -bg \\$bg "
                         .  "-b 0 "
                         # Do not scroll window on new output
                         . "-si "

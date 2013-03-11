@@ -11,13 +11,14 @@ term_width=$((columns * XFTM_MAX_ADVANCE + 2 * border_size))
 term_height=$((lines * (XFTM_ASCENT + XFTM_DESCENT) + 2 * border_size))
 #echo $term_width
 #echo $term_height
+export XTERMS_BG='#fdf6e3'
 x=$(( width / 2 - term_width / 2 ))
 y=$(( height / 2 - term_height / 2))
 TERM_NAME=bigterm \
 SHORT_TERM_NAME=b \
 uxterm \
 	-class BigTerm \
-	-fg black -bg white \
+	-fg black -bg "$XTERMS_BG" \
 	-title bigterm \
 	-name term.b \
 	-geometry ${columns}x${lines}+${x}+${y} \
