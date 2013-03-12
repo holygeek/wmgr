@@ -263,11 +263,35 @@ sub update_winid {
         $winids{$title} = $id;
     }
 
+    my $xwininfo = {};
     foreach my $title (@new_titles) {
         my $cmd = "echo $winids{$title} > $TMP_DIR/$title.winid";
         print $cmd . "\n";
         system($cmd);
+        save_window_geometry($winids{$title});
     }
+}
+
+sub save_window_geometry {
+    my ($id) = @_;
+    my $wininfo = qx/xwininfo -id $id/;
+    my ($term, $x, $y, $w, $h)
+        = $wininfo =~ /
+            .*Window.id:.*0x[^ ]+\s+"([^"]+)"
+            .*Absolute.upper-left.X:\s+(\d+)
+            .*Absolute.upper-left.Y:\s+(\d+)
+            .*Width:\s+(\d+)
+            .*Height:\s+(\d+)
+        /gxms;
+
+    print "$term $x $y $w $h\n";
+    my ($k) = $term =~ /\.(.)/;
+    my $dir = "/dev/shm/term/$k";
+    qx/mkdir -p $dir/;
+    write_file($dir . "/w", $w);
+    write_file($dir . "/h", $h);
+    write_file($dir . "/x", $x);
+    write_file($dir . "/y", $y);
 }
 
 sub restart_and_exit {

@@ -1,0 +1,88 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use File::Slurp;
+
+my $cw = 84; # comfort width
+my $config_entry = {
+  'term.v' => 'vims',
+  'term.s' => 'shells',
+  'term.a' => 'any',
+};
+
+my $direction = $ARGV[0];
+chomp(my $winid = qx/currwin/);
+my ($term, $geom) = qx/xwininfo -id $winid/
+		      =~ /$winid "([^"]+)".*(-geometry \S+).*/gms;
+# print "term $term geom $geom\n";
+my $action;
+if ($direction eq 'left') {
+  $action = 'shrink';
+} elsif ($direction eq 'right') {
+  $action = 'grow';
+} elsif ($direction eq 'big') {
+  $action = 'big';
+}
+my ($width, $height) = $geom =~ m/-geometry ([^x]+)x([^+-]+)/;
+# print "dir $direction term $term\n";
+# print "geom $geom width $width height $height";
+
+my $new_width;
+if ($action eq 'shrink') {
+  if ($width > $cw) {
+    $new_width = int($width / 2);
+  }
+} elsif ($action eq 'grow') {
+  if ($width < 2 * $cw) {
+    $new_width = 2 * $width;
+  }
+} elsif ($action eq 'big') {
+  my ($root_width, $root_height) = qx/xwininfo -root/ =~ m/
+      .*.geometry.(\d+)x(\d+).*
+    /gxms;
+    print "root_width $root_width\n";
+  $new_width = $root_width;
+} else {
+  print "Nothing to do\n";
+}
+
+my $font_size = 10;
+my $font_name = 'Dejavu Sans Mono';
+my $metric = qx/xftmetric "$font_name" $font_size/;
+my ($advance) = $metric =~ /ADVANCE=(\d+)/ms;
+
+chomp(my $medir = qx/dirname \$(readlink -e $0)/);
+my $config_file = "$medir/xterms.conf.pl";
+my %config = eval read_file($config_file);
+my $term_geom = get_geometry_for($term);
+my ($w, $h, $x, $y) = $term_geom =~ /(\d+)x(\d+)[+-]+(\d+)[+-]+(\d+)/;
+# print "term geom $term_geom $w $h $x $y\n";
+
+if ($new_width && $new_width != $width) {
+  print "$action: $width -> $new_width\n";
+  my $width_px;
+  my ($k) = $term =~ /term\.(.)/;
+  my $x = read_file("/dev/shm/term/$k/x");
+  if ($action eq 'shrink') {
+    $width_px = read_file("/dev/shm/term/$k/w");
+  } else {
+    $width_px = $new_width * $advance; 
+  }
+  my $cmd = "wmctrl -r " . oct($winid) . " -i -e 0,$x,-1,$width_px,-1";
+  print "cmd $cmd\n";
+  qx/$cmd/
+}
+
+#  wmctrl -r 33554466 -i -e 0,-1,-1,95,80
+# zenity --info --text $1
+
+sub get_geometry_for {
+  my ($term) = @_;
+  foreach my $key (keys %{$config{geometries}}) {
+    my ($k) = $key =~ /(.).*/;
+    if ("term.$k" eq $term) {
+      return $k;
+    }
+  }
+  return undef;
+}

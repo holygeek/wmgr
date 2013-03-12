@@ -36,6 +36,13 @@
 "xbindkeys_show"
    control+shift + q
 
+"groworshrink left"
+   Alt + Left
+"groworshrink right"
+   Alt + Right
+"groworshrink big"
+   Alt + e
+
 "goto gitk"
    Alt + t
 
