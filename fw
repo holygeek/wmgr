@@ -12,6 +12,37 @@ DESCRIPTION
 "
 }
 
+me=`basename $0`
+usage() {
+cat <<EOF
+NAME
+  $me - Show which screen is running the given process
+
+SYNOPSIS
+  $me [-h] [-f] [pid|cmd]
+
+DESCRIPTION
+
+OPTIONS
+  -f
+    Pass -f to pgrep - match in command args
+
+  -h
+    Show this help message
+EOF
+}
+
+f=
+while getopts fh opt
+do
+  case "$opt" in
+    f) f=-f;;
+    h) usage ; exit;;
+    \?) echo Unknown option ; exit;;
+  esac
+done
+shift $(($OPTIND -1))
+
 pid=$1
 if [ -z "$pid" ]; then
   # Default behavior:
@@ -31,11 +62,10 @@ fi
 
 case $1 in
 	  # Select the newest process
-  [a-z]*)
-    pid=`pgrep -n $1`
+  [a-z.\]\[]*)
+    pid=`pgrep $f -o "$1"`
     if [ -z "$pid" ]; then
       echo "$me: No such task: $1"
-      exit 1
     fi
   ;;
 esac
