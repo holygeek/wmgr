@@ -33,6 +33,9 @@ OPTIONS
   -n
     Dry run
 
+  -o <session name>
+    Show matches only from <session name>
+
   -s
     Do not split token, show whole line
 
@@ -54,7 +57,8 @@ pager=cat
 prompt=
 limit_to_files=
 ascii=
-while getopts ac:de:fhlnsv/ opt
+only=
+while getopts ac:de:fhlno:sv/ opt
 do
   case "$opt" in
     a) ascii=-a;;
@@ -64,6 +68,7 @@ do
     h) usage ; exit;;
     l) pager='sed -e "s/^/$session_name: /"';;
     n) dry_run=t;;
+    o) only="$OPTARG";;
     s) split='cat';;
     v) verbose=t;;
     /) limit_to_files=t;;
@@ -72,15 +77,15 @@ do
 done
 shift $(($OPTIND -1))
 
-base=$1
-if [ -z "$1" ]; then
-  exit 0
-fi
+base=${1:-.}
 if [ -n "$limit_to_files" ]; then
   pager="$pager|grep '[/:._-]'|tr \"[\\\`\'()@,]\" '\\n'|grep '.'"
 fi
 
 for session_name in `screen -ls|grep '(Attached)'|awk '{print $1}'`; do
+  if [ -n "$only" -a "${session_name#[0-9]*.}" != "$only" ]; then
+	continue;
+  fi
   case $session_name in
     *${exclude}*) continue ;;
   esac
