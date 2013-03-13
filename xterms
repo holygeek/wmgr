@@ -45,12 +45,9 @@ my $bg_dark = '#002b36';
 my ($bg, $fg, $xrdb_resource);
 if (int(rand(10)) % 2) {
     $bg = $bg_light;
-    $xrdb_resource = '~/.Xresource.light';
 } else {
     $bg = $bg_dark;
-    $xrdb_resource = '~/.Xresource.dark';
 }
-qx{xrdb $xrdb_resource};
 
 my %opts;
 getopts('b:ehl', \%opts) or do { usage(); exit 1; };
@@ -78,13 +75,22 @@ if (defined $opts{l}) {
 if (defined $opts{b}) {
     $bg = $opts{b};
 }
-if ($bg eq 'white') { $fg = 'black'; }
-elsif ($bg eq 'black') { $fg = 'white'; }
-elsif ($bg eq '#fdf6e3') { $fg = 'black'; }
-elsif ($bg eq '#002b36') { $fg = 'white'; }
-else {
+if ($bg eq 'white' || $bg eq $bg_light || $bg eq 'light') {
+    if ($bg eq 'light') {
+        $bg = $bg_light;
+    }
+    $fg = 'black';
+    $xrdb_resource = 'Xresources.dark';
+} elsif ($bg eq 'black' || $bg eq $bg_dark || $bg eq 'dark') {
+    if ($bg eq 'dark') {
+        $bg = $bg_dark;
+    }
+    $fg = 'white';
+    $xrdb_resource = 'Xresources.light';
+} else {
     die "Invalid background color: '$bg'";
 }
+qx{xrdb -merge $wmgr_home/$xrdb_resource};
 
 foreach my $session (keys %$geometries) {
     my $executable = "$wmgr_home/screen.$session";
