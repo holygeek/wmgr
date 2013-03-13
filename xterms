@@ -56,9 +56,11 @@ if (defined $opts{l}) {
     #my %screens = map { my ($name, $status)
     #                    = $_ =~ /\.([^ ]+).*\(([.*])\)$/; ($name, $status) }
     #                    @screens;
-    print join("\n", sort keys %$geometries) . "\n";
+    foreach my $key (sort keys %$geometries) {
+        print "$key\t=> $geometries->{$key}\n";
+    }
     print "===\n";
-    print join('', sort @screens) . "\n";
+    print join('', sort @screens);
     exit 0;
 }
 if (defined $opts{b}) {
