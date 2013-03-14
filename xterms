@@ -223,7 +223,7 @@ DESCRIPTION
     xterms starts the terminals with the geometries set in the config file
     xterms.conf.pl
 
-    "xterms restart" restarts itself after killing all xterm terminals.
+    "xterms restart [args]" restarts itself after killing all xterm terminals.
 
     The argument [session1,session2,...] limits the terminals to be started.
     Default is to start all terminals.
