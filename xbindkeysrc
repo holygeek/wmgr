@@ -119,10 +119,6 @@
 "(goto -e Vim) || cycle gvimdiff '\) - GVIMDIFF' || (test -f  /dev/shm/desktop.flip && wmctrl -k on && rm -f /dev/shm/desktop.flip) || (wmctrl -k off && touch /dev/shm/desktop.flip)"
     Alt + d 
 
-#"fake.company.signup.sh"
-"goto.or.error full"
-	Alt + f
-
 "cycle term_index term\\."
 	Alt + n
 
