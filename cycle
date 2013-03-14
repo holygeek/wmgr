@@ -47,7 +47,19 @@ n_instances=`wmctrl -l|egrep $v "$title"|wc -l`
 if [ ! $index -lt $n_instances ]; then
 	index=0
 fi
+
+# Emulate MRU
+last=`stat --format=%Y $file_counter`
+now=`date +%s`
+diff=$((now - last))
+if [ $diff -gt 1 ]; then
+  index=$(($index - 1))
+  if [ $index -eq -1 ]; then
+	  index=$n_instances
+  fi
+fi
 echo $index > $file_counter
+choose=$(($index + 1))
 
 choose=$(($index + 1))
 window_id=`wmctrl -l|egrep $v "$title"|awk '{print $1}'|head -$choose|tail -1`
