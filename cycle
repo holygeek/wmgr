@@ -35,6 +35,7 @@ do
 done
 shift $(($OPTIND -1))
 
+mru_delay=2
 file_counter=/dev/shm/$1
 title="$2"
 
@@ -52,7 +53,7 @@ fi
 last=`stat --format=%Y $file_counter`
 now=`date +%s`
 diff=$((now - last))
-if [ $diff -gt 1 ]; then
+if [ $diff -gt $mru_delay ]; then
   index=$(($index - 1))
   if [ $index -eq -1 ]; then
 	  index=$n_instances
