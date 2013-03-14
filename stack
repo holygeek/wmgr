@@ -1,3 +1,6 @@
 #!/bin/sh
 # Window stacking order:
-for winid in `xprop -root|grep -i stacking\(|sed -e 's/.*#//' -e 's/,//g'`; do xwininfo -id $winid;done|grep Window\ id
+for winid in `xprop -root|grep -i stacking\(|sed -e 's/.*#//' -e 's/,//g'`; do
+  xwininfo -id $winid
+done |
+  grep Window\ id | sed -e 's/.*Window id: //'
