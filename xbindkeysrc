@@ -36,11 +36,10 @@
 "xbindkeys_show"
    control+shift + q
 
+# The following identical keys has the effect of toggling the action
 "groworshrink left"
-   Alt + Left
+   Alt + e
 "groworshrink right"
-   Alt + Right
-"groworshrink big"
    Alt + e
 
 "goto gitk"
