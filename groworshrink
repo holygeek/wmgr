@@ -52,8 +52,10 @@ if ($new_width && $new_width != $width) {
   qx/$cmd/;
   if ($action eq 'shrink') {
     my $x = read_file("/dev/shm/term/$k/x");
+    my $y = read_file("/dev/shm/term/$k/y");
     $x -= 1; # xdotool is off by one
-    qx/xdotool getactivewindow windowmove -- $x y/;
+    $y -= 1;
+    qx/xdotool getactivewindow windowmove -- $x $y/;
   }
 }
 
