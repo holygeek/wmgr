@@ -130,7 +130,7 @@
 	Alt + x
 
 "cycle browsers '(Google Chrom|Opera|Firefox)'"
-	Alt + b
+	Alt + u
 
 "cycle -v others '(Google Chrom|Opera|Firefox|term\.)'"
 	Alt + o
