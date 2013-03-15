@@ -13,7 +13,7 @@
 
 exclude=term\.
 currwin=`currwin`
-windowlist=`goto|grep -v "$exclude"|tr '\t' ' '|cut -d' ' -f 1,6-`
+windowlist=`goto|grep -v "term\."|sed -e 's/\s\+/ /g' -e 's/^ //'|cut -d' ' -f 1,5-`
 if [ -z "$windowlist" ]; then
   exit
 fi
