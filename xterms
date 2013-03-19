@@ -267,9 +267,7 @@ sub update_winid {
 
     my $xwininfo = {};
     foreach my $title (@new_titles) {
-        my $cmd = "echo $winids{$title} > $TMP_DIR/$title.winid";
-        print $cmd . "\n";
-        system($cmd);
+        write_file("$TMP_DIR/$title.winid", oct($winids{$title}));
         save_window_geometry($winids{$title});
     }
 }
