@@ -35,7 +35,7 @@ do
 done
 shift $(($OPTIND -1))
 
-mru_delay=2
+mru_delay=5
 file_counter=/dev/shm/$1
 title="$2"
 
