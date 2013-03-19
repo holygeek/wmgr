@@ -120,6 +120,7 @@ sub raise_window {
                 # Focus and raise
                 $cmd = "wmctrl $exact_match -i -a $window_id; xdotool windowfocus $window_id";
         }
+	print "$cmd\n";
 	return system($cmd);
 }
 
