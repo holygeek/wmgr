@@ -17,3 +17,5 @@ ln -s $here/Xresources $HOME/.Xresources
 ln -s $here/xdg.autostart.xbindkeys.desktop /etc/xdg/autostart/xbindkeys.desktop
 
 # install xftmetric - https://github.com/holygeek/xftmetric.git
+
+# pcmanfm - fast file browser
