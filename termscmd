@@ -41,8 +41,8 @@ else
   pager="cat -n|sed -e 's/^  *//'"
 fi
 RPROMPT_REGEX='....:..:..$'
-eval "termsmatch -s '^% .*$pattern' |
-sed -e 's/^% //' -e 's/$RPROMPT_REGEX//' -e 's/   *$//' |
+eval "termsmatch -s '^$ .*$pattern' |
+sed -e 's/^$ //' -e 's/$RPROMPT_REGEX//' -e 's/   *$//' |
 $pager"
 
 # |while read line; do
