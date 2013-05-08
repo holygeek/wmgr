@@ -8,18 +8,15 @@ use warnings;
 use Getopt::Std;
 use File::Basename;
 use File::Slurp;
-
-BEGIN {
-    my $me = readlink $0;
-    my ($dir) = ($me =~ m{(/.*)/[^/]+});
-    require "$dir/Screen.pm";
-}
+use FindBin;
+use lib "$FindBin::RealBin";
+use WMGR home => "$FindBin::RealBin";
+use Screen;
 
 my $TMP_DIR = '/dev/shm';
 my $geom = qx/xrandr | grep '\*'/;
-my $wmgr_home = get_wmgr_home();
 
-my $muxer = get_config('muxer');
+my $muxer = WMGR::get_config('muxer');
 checkMuxerCapabilities($muxer);
 $muxer->clean();
 
@@ -154,6 +151,7 @@ foreach my $which (@torun) {
 }
 sleep 2; update_winid(@torun);
 #`(sleep 4 && cwd=$cwd $cwd/xterms.seticons.sh )&`;
+my $wmgr_home = $FindBin::RealBin;
 `cwd=$wmgr_home $wmgr_home/xterms.seticons.sh &`;
 
 system("if ps -ef|grep xbindkeys|grep -q -v grep; then :; else $wmgr_home/xbind; fi");
@@ -161,19 +159,7 @@ system("if ps -ef|grep xbindkeys|grep -q -v grep; then :; else $wmgr_home/xbind;
 sub get_geometries {
     my ($dummy, $fallback) = @_;
 
-    return get_config('geometries') || $fallback;
-}
-
-sub get_config {
-    my ($entry) = @_;
-
-    my $conf_file = "$wmgr_home/xterms.conf.pl";
-    if (! -f $conf_file) {
-        return undef;
-    }
-
-    my %config = eval read_file($conf_file) or die "Corrupt $conf_file? $@";
-    return $config{$entry};
+    return WMGR::get_config('geometries') || $fallback;
 }
 
 sub usage {
@@ -287,13 +273,6 @@ sub restart_and_exit {
     SHELL
     );
     exit(0);
-}
-
-sub get_wmgr_home {
-    my $cmd = 'readlink -e ' . __FILE__;
-    my $path = qx/$cmd/;
-    chomp $path;
-    return dirname($path);
 }
 
 sub checkMuxerCapabilities {
