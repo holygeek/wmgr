@@ -68,6 +68,7 @@ sub runner {
 
 my %cmdHandler = (
   dump => \&cmd_dump,
+  list => \&cmd_list,
 );
 
 sub runCmd {
@@ -94,6 +95,16 @@ sub cmd_dump {
     die "Failed running '$cmd': $!";
   }
   return $?;
+}
+
+sub cmd_list {
+  my ($self) = @_;
+
+  foreach my $session ($self->list()) {
+    my %s = %{$session};
+    print join " ", @s{qw(pid name status date)};
+    print "\n";
+  }
 }
 
 1;

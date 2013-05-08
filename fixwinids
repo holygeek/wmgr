@@ -1,6 +1,6 @@
 #!/bin/sh
 tmpdir=/dev/shm
-screen -ls|grep '('|awk '{print $1}'|sed -e 's/\./ /'|while read pid termname
+mux list|awk '{print $1" "$2}'|while read pid termname
 do
   firstletter=`echo $termname|sed -e 's/\(.\).*/\1/'`
   winidfile=$tmpdir/term.$firstletter.winid
