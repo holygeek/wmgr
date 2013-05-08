@@ -6,7 +6,7 @@ me=`basename $0`
 usage() {
 cat <<EOF
 DESCRIPTION
-  $me - Show matching text from all attached screen sessions matching BRE <base>
+  $me - Show matching text from all attached muxer sessions matching BRE <base>
 SYNOPSIS
   $me [-dhnv] [-c <prompt>] <base>
 OPTIONS
@@ -22,13 +22,13 @@ OPTIONS
     Show debugging messages
 
   -e <session_name>
-    Exclude strings from screen sessions that matches *<session_name>*
+    Exclude strings from muxer sessions that matches *<session_name>*
 
   -h
     Show this help message
 
   -l
-    Include screen session name in each match shown.
+    Include muxer session name in each match shown.
 
   -n
     Dry run
@@ -82,7 +82,7 @@ if [ -n "$limit_to_files" ]; then
   pager="$pager|grep '[/:._-]'|tr \"[\\\`\'()@,]\" '\\n'|grep '.'"
 fi
 
-for session_name in `screen -ls|grep '(Attached)'|awk '{print $1}'`; do
+for session_name in `mux attached|awk '{print $2}'`; do
   if [ -n "$only" -a "${session_name#[0-9]*.}" != "$only" ]; then
 	continue;
   fi

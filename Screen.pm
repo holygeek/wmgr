@@ -69,6 +69,8 @@ sub runner {
 my %cmdHandler = (
   dump => \&cmd_dump,
   list => \&cmd_list,
+  attached => \&cmd_active,
+  detached => \&cmd_inactive,
 );
 
 sub runCmd {
@@ -98,13 +100,26 @@ sub cmd_dump {
 }
 
 sub cmd_list {
-  my ($self) = @_;
+  my ($self, $wanted_pattern) = @_;
+
+  $wanted_pattern ||= '.*';
 
   foreach my $session ($self->list()) {
     my %s = %{$session};
+    next if $s{status} !~ /$wanted_pattern/;
     print join " ", @s{qw(pid name status date)};
     print "\n";
   }
+}
+
+sub cmd_active {
+  my ($self) = @_;
+  return $self->cmd_list('Attached');
+}
+
+sub cmd_inactive {
+  my ($self) = @_;
+  return $self->cmd_list('Detached');
 }
 
 1;
