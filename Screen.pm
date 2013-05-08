@@ -52,7 +52,7 @@ sub status {
 sub isDetached {
   my ($self, $status, $session) = @_;
   return 1 if ! defined $status->{$session};
-  return 1 if $status->{$session} eq 'Detached';
+  return 1 if $status->{$session}->{status} eq 'Detached';
   return 0;
 }
 
