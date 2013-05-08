@@ -2,6 +2,8 @@ package Screen;
 
 use strict;
 use warnings;
+use Carp;
+use Getopt::Std;
 
 sub new {
   my ($package) = @_;
@@ -62,6 +64,36 @@ sub clean {
 sub runner {
   my ($self, $session) = @_;
   return "screen -DR $session";
+}
+
+my %cmdHandler = (
+  dump => \&cmd_dump,
+);
+
+sub runCmd {
+  my ($self, $cmd) = @_;
+
+  my $handler = $cmdHandler{$cmd} or die "mux: $cmd: no such command.";
+  return $handler->($self);
+}
+
+sub cmd_dump {
+  my ($self) = @_;
+
+  my %opt;
+  getopts('hs:', \%opt);
+
+  my $with_scrollback = $opt{h} || '';
+  my $session = $opt{s} or croak "mux dump: No session given";
+  my $outfile = $ARGV[0] or croak "mux dump: Not outfile given for dump";
+
+  my $cmd = "screen -d -r $session -X hardcopy $with_scrollback $outfile";
+  system($cmd);
+
+  if ($? != 0) {
+    die "Failed running '$cmd': $!";
+  }
+  return $?;
 }
 
 1;

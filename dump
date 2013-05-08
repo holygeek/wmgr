@@ -4,9 +4,9 @@
 
 usage() {
     echo -n "DESCRIPTION
-  dump - dump content of a screen session to stdout
+  dump - dump content of a muxer session to stdout
 USAGE
-  dump [-h] [-A] <screen session>
+  dump [-h] [-A] <muxer session>
 OPTIONS
   -A
     Dump the scrollback buffer contents too
@@ -15,7 +15,7 @@ OPTIONS
     Dump ascii characters only (non-ascii will be replaced with space)
 
   -c
-    Use the previous 'cached' dump, do not ask screen to redump.
+    Use the previous 'cached' dump, do not ask muxer to redump.
 
   -d
     Show debugging messages
@@ -48,22 +48,22 @@ if [ -z "$term" ]; then
   usage
 fi
 
-out=~/tmp/dump.$term
+outputfile=~/tmp/dump.$term
 
 if [ -n "$from_cache" ]; then
-  cat $out
+  cat $outputfile
   exit 0
 fi
 
-rm -f $out
-touch $out
+rm -f $outputfile
+touch $outputfile
 oldnlines=-1
-exe "screen -d -r $term -X hardcopy $dump_with_scrollback $out"
+exe "mux dump $dump_with_scrollback -s $term $outputfile"
 if [ -n "$dump_with_scrollback" ]; then
   # It takes a while ...
-  while [ `cat $out|wc -l` -ne $oldnlines ]; do
-    oldnlines=`cat $out|wc -l`
+  while [ `cat $outputfile|wc -l` -ne $oldnlines ]; do
+    oldnlines=`cat $outputfile|wc -l`
     sleep .01
   done
 fi
-exe cat $out $pager
+exe cat $outputfile $pager
