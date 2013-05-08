@@ -9,16 +9,24 @@ use Getopt::Std;
 use File::Basename;
 use File::Slurp;
 
-qx/screen -wipe/;
+BEGIN {
+    my $me = readlink $0;
+    my ($dir) = ($me =~ m{(/.*)/[^/]+});
+    require "$dir/Screen.pm";
+}
 
 my $TMP_DIR = '/dev/shm';
 my $geom = qx/xrandr | grep '\*'/;
 my $wmgr_home = get_wmgr_home();
 
-my $two_screen_width = 3360;
+my $muxer = get_config('muxer');
+checkMuxerCapabilities($muxer);
+$muxer->clean();
+
+my $two_display_width = 3360;
 my $offset_x = 0;
-if ($geom =~ /$two_screen_width/) {
-    $offset_x = $two_screen_width / 2;
+if ($geom =~ /$two_display_width/) {
+    $offset_x = $two_display_width / 2;
 }
 
 my $full_rows=69;
@@ -51,16 +59,17 @@ if (defined $opts{h}) {
     exit(0);
 }
 if (defined $opts{l}) {
-    my @screens = `screen -ls`;
-    @screens = map { /^\t/ && do { $_ =~ s/.*\.//; $_ } } @screens;
-    #my %screens = map { my ($name, $status)
-    #                    = $_ =~ /\.([^ ]+).*\(([.*])\)$/; ($name, $status) }
-    #                    @screens;
+    my @list = $muxer->list();
     foreach my $key (sort keys %$geometries) {
         print "$key\t=> $geometries->{$key}\n";
     }
     print "===\n";
-    print join('', sort @screens);
+    my $fmt = "%-8s %-8s %-22s %s\n";
+    printf $fmt, qw(PID NAME DATE STATE);
+    foreach my $s (@list) {
+        my %s = %$s;
+        printf $fmt, @s{qw(pid name date status)};
+    }
     exit 0;
 }
 if (defined $opts{b}) {
@@ -69,13 +78,7 @@ if (defined $opts{b}) {
 }
 
 foreach my $session (keys %$geometries) {
-    my $executable = "$wmgr_home/screen.$session";
-    if ( not -f $executable  ) {
-        $executable = "screen -DR $session";
-        # croak "The file screen.$executable does not exist.\n".
-        #       "Its content should be somewhat like this:\n".
-        #       "screen -DR man\n";
-    }
+    my $executable = $muxer->runner($session);
     my ($first_letter) = $session =~ /(.).*/;
     my ($title) = "term.$first_letter";
 
@@ -133,9 +136,11 @@ if (defined($ARGV[0])) {
     exit 1;
   }
 } else {
-  my $screen_status = get_screen_status();
-  foreach my $which (keys %{$xterms}) {
-    push @torun, $which if ok_to_run($which, $screen_status);
+  my $muxer_status = $muxer->status();
+  foreach my $session_name (keys %{$xterms}) {
+    if ($muxer->isDetached($muxer_status, $session_name)) {
+        push @torun, $session_name
+    }
   }
 }
 
@@ -169,42 +174,6 @@ sub get_config {
 
     my %config = eval read_file($conf_file) or die "Corrupt $conf_file? $@";
     return $config{$entry};
-}
-
-sub get_screen_status {
-  # output of screen -ls:
-  #    There are screens on:
-  #  <tab>5138.vims           <tab>(Attached)
-  #     24754.anything           (Attached)
-  #     24752.session            (Attached)
-  #     24748.shells             (Attached)
-  #    5 Sockets in /var/run/screen/S-user.
-  my @screen_list = `screen -ls|grep '^\t'`;
-  my $screen_status = {};
-  foreach my $screen_session (@screen_list) {
-    chomp $screen_session;
-    my ($empty, $pid_name, $date, $status) = split(/\t/, $screen_session);
-    $pid_name =~ /([0-9])+\.(.*)/;
-    my $name = $2;
-    $screen_status->{$name} = $status;
-  }
-  return $screen_status;
-}
-
-# ok to run means:
-#   The screen does not exist OR The screen is detached.
-sub ok_to_run {
-  my $which = shift;
-  my $screen_status = shift;
-
-  if (!defined($screen_status->{$which})) {
-    return 1;
-  }
-  if ($screen_status->{$which} eq '(Detached)') {
-    return 1;
-  }
-
-  return 0;
 }
 
 sub usage {
@@ -325,4 +294,19 @@ sub get_wmgr_home {
     my $path = qx/$cmd/;
     chomp $path;
     return dirname($path);
+}
+
+sub checkMuxerCapabilities {
+    my ($muxer) = @_;
+    my @abilities = qw(list status isDetached clean runner);
+    my @errors;
+    foreach my $sub (@abilities) {
+        unless ($muxer->can($sub)) {
+            push @errors, $sub;
+        }
+    }
+
+    if (@errors) {
+        die join("\n\t", "Missing subs in $muxer:", @errors);
+    }
 }
