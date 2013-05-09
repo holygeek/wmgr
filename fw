@@ -47,7 +47,7 @@ pid=$1
 if [ -z "$pid" ]; then
   # Default behavior:
   # Search for vim's E325 message through all muxer sessions
-  for term in `mux list '%pid.%name'`; do
+  for term in `mux list name`; do
     pid=`dump $term|grep 'process ID: [0-9][0-9]* (still running)'|sed -e 's/.*: \([0-9]\+\) .*/\1/'`
     if [ -n "$pid" ]; then
       break
