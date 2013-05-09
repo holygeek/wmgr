@@ -4,13 +4,9 @@ use strict;
 use warnings;
 use Carp;
 use Getopt::Std;
+use base qw/Muxer/;
 
-my $TMUX_HISTSIZE=2000;
-sub new {
-  my ($package) = @_;
-  my $self = {};
-  return bless $self, $package;
-}
+my $TMUX_HISTSIZE = 19000;
 
 sub list {
   my ($self) = @_;
@@ -39,35 +35,26 @@ sub list {
   return @list;
 }
 
-sub status {
-  my ($self) = @_;
-  my %status;
-  foreach my $s ($self->list()) {
-    $status{$s->{name}} = {
-      pid => $s->{pid},
-      date => $s->{date},
-      status => $s->{status},
-    };
-  }
-  return \%status;
-}
-
 sub isDetached {
   my ($self, $status, $session) = @_;
-  return 1 if ! defined $status->{$session};
-  return 1 if $status->{$session}->{status} eq 'detached';
-  return 0;
-}
-
-sub clean {
-  my ($self) = @_;
-  # no op
-  return;
+  die "$session is not running" if ! $self->isRunning($status, $session);
+  return $status->{$session}->{status} eq 'detached';
 }
 
 sub runner {
   my ($self, $session) = @_;
-  return "tmux -2 attach-session -s $session";
+  my $tmux_arg = "-2 " . join(" ';' ",
+    "set-option history-limit $TMUX_HISTSIZE",
+    "new-session -d -s $session",
+    "attach-session -t $session",
+  );
+  return "tmux-starter $tmux_arg";
+}
+
+sub attacher {
+  my ($self, $session) = @_;
+  #return "tmux -2 new-session -d -s $session \\\\; attach-session -d -s $session";
+  return "tmux-starter -2 attach-session -t $session";
 }
 
 my %cmdHandler = (
@@ -78,6 +65,7 @@ my %cmdHandler = (
   goto => \&cmd_goto,
   list => \&cmd_list,
   start => \&cmd_start,
+  title => \&cmd_title,
 );
 
 sub runCmd {
@@ -196,37 +184,11 @@ sub cmd_goto {
   system("tmux select-window -t $session:$window");
 }
 
-sub cmd_help {
-  print "NAME
-  mux
+sub cmd_title {
+  my ($self) = @_;
+  my $title = join(" ", @ARGV);
 
-SYNOPSIS
-  mux [help|-h]
-  mux <command> [options]
-
-COMMANDS
-  attached
-    List attached sessions
-
-  goto <sesion name> <window>
-    Switch to window <window> in session <session name>
-
-  cmd <session name> <commands>
-    Send <commands> to session <session name>
-
-  detached
-    List detached sessions
-
-  dump [-h] -s <session name>
-    Dumps <session name>, with full scrollback buffer if -h is given.
-
-  list
-  list [pid name status date]
-  list '%pid.%name'
-
-  start <session name>
-    Start or reattach <session name>
-";
-};
+  print "\e]2;$title\e\\";
+}
 
 1;

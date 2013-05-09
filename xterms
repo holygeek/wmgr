@@ -12,6 +12,7 @@ use FindBin;
 use lib "$FindBin::RealBin";
 use WMGR home => "$FindBin::RealBin";
 use Screen;
+use Tmux;
 
 my $TMP_DIR = '/dev/shm';
 my $geom = qx/xrandr | grep '\*'/;
@@ -75,12 +76,11 @@ if (defined $opts{b}) {
 }
 
 foreach my $session (keys %$geometries) {
-    my $executable = $muxer->runner($session);
     my ($first_letter) = $session =~ /(.).*/;
     my ($title) = "term.$first_letter";
 
     $xterms->{$session} = "TERM_NAME=$session SHORT_TERM_NAME=$first_letter "
-                        . "XTERMS_BG=$bg XTERMS_FG=$fg "
+                        . "XTERMS_BG=$bg XTERMS_FG=$fg TMUX= "
                         # .  "xfce4-terminal "
                         # .  "gnome-terminal "
                         # .  "rxvt-unicode "
@@ -105,10 +105,12 @@ foreach my $session (keys %$geometries) {
                         # xterm:
                         .  "-geometry ". $geometries->{$session} . " "
 
-                        .  "-e $executable  &";
+                        .  "-e";
 }
 
+my $muxer_status = $muxer->status();
 my @torun;
+my @toreattach;
 
 if (defined($ARGV[0])) {
   if ($ARGV[0] eq 'restart') {
@@ -123,32 +125,49 @@ if (defined($ARGV[0])) {
   foreach my $which (split(/,/, $ARGV[0])) {
     foreach my $session_name (keys %$xterms) {
         if ($session_name =~ /^$which/) {
-            push @torun, $session_name;
+            toRunOrReattach($muxer_status, $session_name);
         }
     }
   }
 
-  if (scalar @torun == 0) {
+  if (scalar @torun == 0 && scalar @toreattach == 0 ) {
     print "No session matches $ARGV[0]\n";
     exit 1;
   }
 } else {
-  my $muxer_status = $muxer->status();
   foreach my $session_name (keys %{$xterms}) {
-    if ($muxer->isDetached($muxer_status, $session_name)) {
-        push @torun, $session_name
-    }
+      toRunOrReattach($muxer_status, $session_name);
   }
 }
 
+sub toRunOrReattach {
+    my ($muxer_status, $session) = @_;
+    if ($muxer->isRunning($muxer_status, $session)) {
+        if ($muxer->isDetached($muxer_status, $session)) {
+            push @toreattach, $session;
+        }
+    } else {
+        push @torun, $session;
+    }
+}
 
-foreach my $which (@torun) {
-    my $cmd = $xterms->{$which};
+foreach my $session (@torun) {
+    my $executable = $muxer->runner($session);
+    my $cmd = $xterms->{$session} . " $executable &";
     my $cmd_to_print = $cmd;
-    $cmd_to_print =~ s/ -/ \\\n\t-/g;
+    #$cmd_to_print =~ s/ -/ \\\n\t-/g;
     print "$cmd_to_print\n";
     system("cd $ENV{HOME}; $cmd");
 }
+foreach my $session (@toreattach) {
+    my $executable = $muxer->attacher($session);
+    my $cmd = $xterms->{$session} . " $executable &";
+    my $cmd_to_print = $cmd;
+    #$cmd_to_print =~ s/ -/ \\\n\t-/g;
+    print "$cmd_to_print\n";
+    system("cd $ENV{HOME}; $cmd");
+}
+
 sleep 2; update_winid(@torun);
 #`(sleep 4 && cwd=$cwd $cwd/xterms.seticons.sh )&`;
 my $wmgr_home = $FindBin::RealBin;
@@ -278,12 +297,14 @@ sub restart_and_exit {
 sub checkMuxerCapabilities {
     my ($muxer) = @_;
     my @abilities = qw(
+        attacher
         clean
         cmd_dump
         cmd_start
         cmd_goto
         cmd_list
         isDetached
+        isRunning
         list
         runner
         status

@@ -4,12 +4,7 @@ use strict;
 use warnings;
 use Carp;
 use Getopt::Std;
-
-sub new {
-  my ($package) = @_;
-  my $self = {};
-  return bless $self, $package;
-}
+use base qw/Muxer/;
 
 sub list {
   my ($self) = @_;
@@ -36,24 +31,10 @@ sub list {
   return @list;
 }
 
-sub status {
-  my ($self) = @_;
-  my %status;
-  foreach my $s ($self->list()) {
-    $status{$s->{name}} = {
-      pid => $s->{pid},
-      date => $s->{date},
-      status => $s->{status},
-    };
-  }
-  return \%status;
-}
-
 sub isDetached {
   my ($self, $status, $session) = @_;
-  return 1 if ! defined $status->{$session};
-  return 1 if $status->{$session}->{status} eq 'Detached';
-  return 0;
+  die "$session is not running" if ! $self->isRunning($status, $session);
+  return $status->{$session}->{status} eq 'Detached';
 }
 
 sub clean {
@@ -66,6 +47,11 @@ sub runner {
   return "screen -DR $session";
 }
 
+sub attacher {
+  my ($self, $session) = @_;
+  return "screen -DR $session";
+}
+
 my %cmdHandler = (
   attached => \&cmd_active,
   cmd => \&cmd_cmd,
@@ -74,6 +60,7 @@ my %cmdHandler = (
   goto => \&cmd_goto,
   list => \&cmd_list,
   start => \&cmd_start,
+  title => \&cmd_title,
 );
 
 sub runCmd {
@@ -187,37 +174,11 @@ sub cmd_goto {
   system("screen -d -r $session -X select $window");
 }
 
-sub cmd_help {
-  print "NAME
-  mux
+sub cmd_title {
+  my ($self) = @_;
+  my $title = join(" ", @ARGV);
 
-SYNOPSIS
-  mux [help|-h]
-  mux <command> [options]
-
-COMMANDS
-  attached
-    List attached sessions
-
-  goto <sesion name> <window>
-    Switch to window <window> in session <session name>
-
-  cmd <session name> <commands>
-    Send <commands> to session <session name>
-
-  detached
-    List detached sessions
-
-  dump [-h] -s <session name>
-    Dumps <session name>, with full scrollback buffer if -h is given.
-
-  list
-  list [pid name status date]
-  list '%pid.%name'
-
-  start <session name>
-    Start or reattach <session name>
-";
-};
+  system("screen -d -r $ENV{TERM_NAME} -X title '$title'");
+}
 
 1;
