@@ -127,7 +127,7 @@ sub cmd_list {
 
   foreach my $session ($self->list()) {
     my %s = %{$session};
-    next if $s{status} !~ /$wanted_pattern/;
+    next if $s{status} !~ /$wanted_pattern/i;
     if (defined $format) {
       my $output = $format;
       foreach my $f (@fields) {
