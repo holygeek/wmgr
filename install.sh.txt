@@ -1,5 +1,5 @@
 #depends:
-sudo apt-get install wmctrl xbindkeys suckless-tools
+sudo apt-get install wmctrl xbindkeys suckless-tools screen tmux
 
 # apt-get source screen
 # # comment out 'New screen' message in screen.c
