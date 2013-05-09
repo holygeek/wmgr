@@ -21,4 +21,4 @@ uxterm \
 	-title bigterm \
 	-name term.b \
 	-geometry ${columns}x${lines}+${x}+${y} \
-	-e screen -DR ${1:-bigterm}
+	-e mux start ${1:-bigterm}

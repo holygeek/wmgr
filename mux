@@ -9,7 +9,13 @@ use Screen;
 my $muxer = WMGR::get_config('muxer');
 
 if (scalar @ARGV == 0) {
-    die "mux: Nothing to do";
+    $muxer->cmd_help();
+    exit 0;
+}
+
+if ($ARGV[0] eq '-h' || $ARGV[0] eq 'help') {
+    print $muxer->cmd_help();
+    exit 0;
 }
 
 my $cmd = shift @ARGV;

@@ -277,8 +277,19 @@ sub restart_and_exit {
 
 sub checkMuxerCapabilities {
     my ($muxer) = @_;
-    my @abilities = qw(list status isDetached clean runner cmd_dump);
+    my @abilities = qw(
+        clean
+        cmd_dump
+        cmd_start
+        cmd_goto
+        cmd_list
+        isDetached
+        list
+        runner
+        status
+    );
     # cmd_dump needed by ./dump
+    # cmd_start needed by ./bigterm
     my @errors;
     foreach my $sub (@abilities) {
         unless ($muxer->can($sub)) {

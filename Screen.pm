@@ -67,10 +67,13 @@ sub runner {
 }
 
 my %cmdHandler = (
-  dump => \&cmd_dump,
-  list => \&cmd_list,
   attached => \&cmd_active,
+  cmd => \&cmd_cmd,
   detached => \&cmd_inactive,
+  dump => \&cmd_dump,
+  goto => \&cmd_goto,
+  list => \&cmd_list,
+  start => \&cmd_start,
 );
 
 sub runCmd {
@@ -104,10 +107,36 @@ sub cmd_list {
 
   $wanted_pattern ||= '.*';
 
+  my %opt;
+  getopts('h', \%opt);
+  if (defined $opt{h}) {
+    print "Usage: mux list [pid name status date]\n";
+    print "       mux list '%pid.%name: %status %date'\n";
+    exit 0;
+  }
+
+  my $format;
+  my @fields = qw(pid name status date);
+  if (scalar @ARGV > 0) {
+    if (scalar @ARGV == 1 && $ARGV[0] =~ /%/) {
+      $format = $ARGV[0];
+    } else {
+      @fields = @ARGV;
+    }
+  }
+
   foreach my $session ($self->list()) {
     my %s = %{$session};
     next if $s{status} !~ /$wanted_pattern/;
-    print join " ", @s{qw(pid name status date)};
+    if (defined $format) {
+      my $output = $format;
+      foreach my $f (@fields) {
+        $output =~ s/\%\b$f\b/$s{$f}/g;
+      }
+      print $output;
+    } else {
+      print join " ", @s{@fields};
+    }
     print "\n";
   }
 }
@@ -121,5 +150,74 @@ sub cmd_inactive {
   my ($self) = @_;
   return $self->cmd_list('Detached');
 }
+
+sub cmd_start {
+  my ($self) = @_;
+  my ($session_name) = @ARGV;
+
+  if (! defined $session_name) {
+    die "No session name given";
+  }
+  if (length $session_name == 0) {
+    die "Empty session name";
+  }
+
+  system("screen -DR $session_name");
+}
+
+sub cmd_cmd {
+  my ($self) = @_;
+  my ($session, @command) = @ARGV;
+
+  if (! defined $session || scalar @command == 0) {
+    die "Usage: mux cmd <session> <commands>";
+  }
+
+  system("screen -d -r $session -X " . join(" ", @command));
+}
+
+sub cmd_goto {
+  my ($self) = @_;
+  my ($session, $window) = @ARGV;
+
+  if (! defined $session || ! defined $window) {
+    die "Usage: mux goto <session> <window>";
+  }
+
+  system("screen -d -r $session -X select $window");
+}
+
+sub cmd_help {
+  print "NAME
+  mux
+
+SYNOPSIS
+  mux [help|-h]
+  mux <command> [options]
+
+COMMANDS
+  attached
+    List attached sessions
+
+  goto <sesion name> <window>
+    Switch to window <window> in session <session name>
+
+  cmd <session name> <commands>
+    Send <commands> to session <session name>
+
+  detached
+    List detached sessions
+
+  dump [-h] -s <session name>
+    Dumps <session name>, with full scrollback buffer if -h is given.
+
+  list
+  list [pid name status date]
+  list '%pid.%name'
+
+  start <session name>
+    Start or reattach <session name>
+";
+};
 
 1;
