@@ -29,10 +29,10 @@ NAME
 
 SYNOPSIS
 	dtree <pid>
-	dtree <screen session name>
+	dtree <muxer session name>
 
 DESCRIPTION
-	Run pstree on given pid or screen session name, annotate each process
+	Run pstree on given pid or muxer session name, annotate each process
 	id with their current directory
 
 OPTIONS
@@ -67,9 +67,9 @@ my $all = ! defined $ARGV[0];
 my (@session_names, @PID_OR_SESSION);
 my %session_name_for;
 if ($all) {
-	my $lines = `screen -ls|grep '^\t'`;
-	(@PID_OR_SESSION) = $lines =~ m{\s+([0-9]+)\.[^\t]+\s}gms;
-	(@session_names) = $lines =~ m{\s+([0-9]+\.[a-z]+)\s[^\t]+\s}gms;
+	my $lines = `mux list|awk '{print \$1"."\$2}'`;
+	(@PID_OR_SESSION) = $lines =~ m{\s*([0-9]+)\.[a-z]+}gms;
+	(@session_names) = $lines =~ m{\s*([0-9]+\.[a-z]+)}gms;
 	%session_name_for = map { split /\./ } @session_names;
 } else {
 	@PID_OR_SESSION = @ARGV;
@@ -78,15 +78,15 @@ if ($all) {
 my @output;
 my %dirs;
 foreach my $pid_or_session (@PID_OR_SESSION) {
-	# If screen session name is given, get pid from screen -ls that matches
+	# If muxer session name is given, get pid from the session that matches
 	# the session name
 	my $output = '';
 	my $pid = $pid_or_session;
 	if ($pid_or_session !~ /^\d+$/) {
-		my $screen_ls = `screen -ls`;
-		($pid, my $session) = $screen_ls =~ m/(\d+)\.(${pid_or_session}[^\s]*)/;
+		my $muxer_list = `mux list|awk '{print \$1"."\$2}'`;
+		($pid, my $session) = $muxer_list =~ m/(\d+)\.(${pid_or_session}.*)/;
 		if (! $pid) {
-			print "No screen session matching '$pid_or_session'\n";
+			print "No muxer session matching '$pid_or_session'\n";
 			exit 1;
 		}
 		$output .= "$pid.$session\n";
