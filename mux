@@ -5,6 +5,7 @@ use FindBin;
 use lib $FindBin::RealBin;
 use WMGR home => $FindBin::RealBin;
 use Screen;
+use Tmux;
 
 my $muxer = WMGR::get_config('muxer');
 
