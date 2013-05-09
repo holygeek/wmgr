@@ -17,7 +17,7 @@ use Tmux;
 my $TMP_DIR = '/dev/shm';
 my $geom = qx/xrandr | grep '\*'/;
 
-my $muxer = WMGR::get_config('muxer');
+my $muxer = get_muxer();
 checkMuxerCapabilities($muxer);
 $muxer->clean();
 
@@ -292,6 +292,19 @@ sub restart_and_exit {
     SHELL
     );
     exit(0);
+}
+
+sub get_muxer {
+    my $muxer;
+    my $muxer_pkg = WMGR::get_config('muxer');
+    if ($muxer_pkg eq 'Tmux') {
+        $muxer = Tmux->new();
+    } elsif ($muxer_pkg eq 'Screen') {
+        $muxer = Screen->new();
+    } else {
+        die "no muxer for $muxer_pkg";
+    }
+    return $muxer;
 }
 
 sub checkMuxerCapabilities {

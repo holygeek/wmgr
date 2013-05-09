@@ -48,7 +48,7 @@
   my $lr = 15;
 
   my %config = (
-  muxer => Screen->new(),
+  muxer => 'Tmux',
   geometries => {
       hilite => join('', $fw - $cw, 'x', $fh /   2, '-', -$bs, '+', $hr),
       kraken => join('', $fw - $cw, 'x', $fh      , '-', -$bs, '+', $hr),
