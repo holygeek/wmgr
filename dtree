@@ -6,7 +6,6 @@ use Getopt::Std;
 
 sub get_pwd {
 	my ($pid) = @_;
-	my $shell_cwd = "/dev/shm/$pid.cwd";
 
 	my $pwd;
 
