@@ -72,9 +72,11 @@ esac
 
 # echo pid: $pid
 TERM_NAME=
-eval `cat /proc/$pid/environ|tr '\000' '\n'|grep -E '^(TERM_NAME|WINDOW|SHLVL)='`
+eval `cat /proc/$pid/environ|tr '\000' '\n'|grep -E '^(TERM_NAME|WINDOW|TMUX_PANE|SHLVL)='`
 if [ -n "$TERM_NAME" ]; then
   goto term.$TERM_NAME[1]
-  echo mux goto $TERM_NAME $WINDOW
-  mux goto $TERM_NAME $WINDOW
+  echo mux goto $TERM_NAME $WINDOW $TMUX_PANE
+  # $WINDOW is unique to screen - it is empty in tmux
+  # $TMUX_PANE is unique to tmux - it is empty in screen
+  mux goto $TERM_NAME $WINDOW $TMUX_PANE
 fi

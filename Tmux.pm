@@ -187,7 +187,7 @@ sub cmd_goto {
     die "Usage: mux goto <session> <window>";
   }
 
-  system("tmux select-window -t $session:$window");
+  system("tmux select-window -t $window");
 }
 
 sub cmd_title {
