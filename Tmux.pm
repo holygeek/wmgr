@@ -55,7 +55,12 @@ sub runner {
 sub attacher {
   my ($self, $session) = @_;
   #return "tmux -2 new-session -d -s $session \\\\; attach-session -d -s $session";
-  return "tmux-starter -2 attach-session -t $session";
+  my $tmux_arg = "-2 " . join(" ';' ",
+    "attach-session -t $session",
+  );
+  return "tmux"
+     . "-starter"
+    . " $tmux_arg";
 }
 
 my %cmdHandler = (
