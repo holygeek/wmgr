@@ -44,7 +44,6 @@ sub isDetached {
 sub runner {
   my ($self, $session) = @_;
   my $tmux_arg = "-2 " . join(" ';' ",
-    "set-option history-limit $TMUX_HISTSIZE",
     "new-session -d -s $session",
     "attach-session -t $session",
   );
