@@ -59,6 +59,7 @@ my %cmdHandler = (
   dump => \&cmd_dump,
   goto => \&cmd_goto,
   list => \&cmd_list,
+  listall => \&cmd_list_all_windows,
   start => \&cmd_start,
   title => \&cmd_title,
 );
@@ -126,6 +127,11 @@ sub cmd_list {
     }
     print "\n";
   }
+}
+
+sub cmd_list_all_windows {
+  my ($self) = @_;
+  print `screen -ls`;
 }
 
 sub cmd_active {

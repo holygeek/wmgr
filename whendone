@@ -51,14 +51,14 @@ if [ -z "$1" ]; then
 	exit 1
 fi
 
-if ! xterms -l|grep -q $1; then
+if ! mux listall|grep -q $1; then
 	echo "Term session $1 does not exist"
 	exit 1;
 fi
 
-PROMPT_REGEX='^\$'
+PROMPT_REGEX='^\$$'
 c=0
-while ! dump $1|tail -1|grep -q "$PROMPT_REGEX"; do
+while ! dump $1|grep -v '^$'|tail -1|grep -q "$PROMPT_REGEX"; do
 	c=$((c + 1))
 	if [ $n -gt 0 ]; then
 	  if [ $c -eq $n ]; then
