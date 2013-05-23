@@ -201,7 +201,7 @@ sub cmd_title {
   my ($self) = @_;
   my $title = join(" ", @ARGV);
 
-  print "\e]2;$title\e\\";
+  system("tmux rename-window '$title'");
 }
 
 1;
