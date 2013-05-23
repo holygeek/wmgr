@@ -1,6 +1,10 @@
 #!/bin/sh
 # Created: Thu May  9 12:31:41 MYT 2013
-/usr/bin/tmux "$@" ||
+tmux=/usr/local/bin/tmux
+if [ ! -x $tmux ]; then
+  tmux=/usr/bin/tmux
+fi
+$tmux "$@" ||
 {
   echo -n "Press any key to continue ..."
   read ans
