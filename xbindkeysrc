@@ -42,7 +42,8 @@
 "groworshrink right"
    Alt + e
 
-"goto gitk"
+# gitk or git gui blame
+"goto gitk || goto 'File Viewer'"
    Alt + t
 
 "goto bigterm || bigterm"
