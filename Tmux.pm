@@ -7,6 +7,7 @@ use Getopt::Std;
 use base qw/Muxer/;
 
 my $TMUX_HISTSIZE = 19000;
+my $tmux_bin = "tmux";
 
 sub list {
   my ($self) = @_;
@@ -14,7 +15,7 @@ sub list {
   # a: 3 windows (created Thu May  9 09:54:20 2013) [156x33] (attached)
   # foobar: 1 windows (created Thu May  9 09:55:49 2013) [156x33]
 
-  my @sessions = `tmux list-sessions`;
+  my @sessions = `$tmux_bin list-sessions`;
   my @list;
   foreach my $line (@sessions) {
     chomp $line;
@@ -47,18 +48,17 @@ sub runner {
     "new-session -d -s $session",
     "attach-session -t $session",
   );
-  return "tmux"
+  return $tmux_bin
      . "-starter"
     . " $tmux_arg";
 }
 
 sub attacher {
   my ($self, $session) = @_;
-  #return "tmux -2 new-session -d -s $session \\\\; attach-session -d -s $session";
   my $tmux_arg = "-2 " . join(" ';' ",
     "attach-session -t $session",
   );
-  return "tmux"
+  return $tmux_bin
      . "-starter"
     . " $tmux_arg";
 }
@@ -96,7 +96,7 @@ sub cmd_dump {
     $with_scrollback = "-S -$TMUX_HISTSIZE";
   }
 
-  my $cmd = "tmux capture-pane -t $session $with_scrollback \\;"
+  my $cmd = "$tmux_bin capture-pane -t $session $with_scrollback \\;"
     . " show-buffer \\; delete-buffer >  $outfile";
   system($cmd);
 
@@ -147,7 +147,7 @@ sub cmd_list {
 
 sub cmd_list_all_windows {
   my ($self) = @_;
-  print `tmux list-windows -a`;
+  print `$tmux_bin list-windows -a`;
 }
 
 
@@ -172,7 +172,7 @@ sub cmd_start {
     die "Empty session name";
   }
 
-  system("tmux attach-session $session_name");
+  system("$tmux_bin attach-session $session_name");
 }
 
 sub cmd_cmd {
@@ -183,7 +183,7 @@ sub cmd_cmd {
     die "Usage: mux cmd <session> <commands>";
   }
 
-  system("tmux " . join(" ", @command) . " -t $session");
+  system(join(" ", $tmux_bin, @command) . " -t $session");
 }
 
 sub cmd_goto {
@@ -194,14 +194,14 @@ sub cmd_goto {
     die "Usage: mux goto <session> <window>";
   }
 
-  system("tmux select-window -t $window");
+  system("$tmux_bin select-window -t $window");
 }
 
 sub cmd_title {
   my ($self) = @_;
   my $title = escape_quote(join(" ", @ARGV));
 
-  system("tmux rename-window \"$title\"");
+  system("$tmux_bin rename-window \"$title\"");
 }
 
 sub escape_quote {
