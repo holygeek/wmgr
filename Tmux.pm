@@ -48,9 +48,7 @@ sub runner {
     "new-session -d -s $session",
     "attach-session -t $session",
   );
-  return $tmux_bin
-     . "-starter"
-    . " $tmux_arg";
+  return "tmux-starter $tmux_arg";
 }
 
 sub attacher {
