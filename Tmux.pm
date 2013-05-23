@@ -199,9 +199,15 @@ sub cmd_goto {
 
 sub cmd_title {
   my ($self) = @_;
-  my $title = join(" ", @ARGV);
+  my $title = escape_quote(join(" ", @ARGV));
 
-  system("tmux rename-window '$title'");
+  system("tmux rename-window \"$title\"");
+}
+
+sub escape_quote {
+  my ($text) = @_;
+  $text =~ s/"/\\"/g;
+  return $text;
 }
 
 1;
