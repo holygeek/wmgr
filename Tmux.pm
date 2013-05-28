@@ -170,7 +170,7 @@ sub cmd_start {
     die "Empty session name";
   }
 
-  system("$tmux_bin attach-session $session_name");
+  system("TMUX= tmux-starter new-session -d -s $session_name ';' attach-session -t $session_name");
 }
 
 sub cmd_cmd {
