@@ -67,3 +67,4 @@ if [ -n "$dump_with_scrollback" ]; then
   done
 fi
 exe cat $outputfile $pager
+rm -f $outputfile
