@@ -34,6 +34,14 @@
 
   # Full Height
   my $fh = int($root_height / $H);
+  # Half height
+  my $hh = int($fh / 2);
+
+  my $lop = 0;
+  if ($hh * 2 < $fh) {
+    # vertically lopsided
+    $lop = 1;
+  }
 
   # Half Width
   my $hw = $fw/2;
@@ -50,10 +58,10 @@
   my %config = (
   muxer => 'Tmux',
   geometries => {
-      hilite => join('', $fw - $cw, 'x', $fh /   2, '-', -$bs, '+', $hr),
+      hilite => join('', $fw - $cw, 'x', $hh+$lop , '-', -$bs, '+', $hr),
       kraken => join('', $fw - $cw, 'x', $fh      , '-', -$bs, '+', $hr),
       mermaid=> join('', 2 *   $cw, 'x', $fh      , '+', -$bs, '+', $hr),
-      lolite => join('', $fw - $cw, 'x', $fh /   2, '-', -$bs, '-',   0),
+      lolite => join('', $fw - $cw, 'x', $hh      , '-', -$bs, '-',   0),
       full   => join('', $fw      , 'x', $fh - $lr, '+', -$bs, '+', $hr),
       gran   => join('', $hw      , 'x', $fh - $lr, '+', -$bs, '+', $hr),
       imp    => join('', $hw      , 'x', $fh - $lr, '-', -$bs, '+', $hr),
