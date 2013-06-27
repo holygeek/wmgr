@@ -1,7 +1,9 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use File::Slurp;
+use FindBin;
+use lib "$FindBin::RealBin";
+use Common;
 
 my $cw = 84; # comfort width
 
@@ -25,7 +27,7 @@ my ($width, $height) = $geom =~ m/-geometry ([^x]+)x([^+-]+)/;
 my $new_width;
 my ($k) = $term =~ /term\.(.)/;
 if ($action eq 'shrink') {
-  $new_width = read_file("/dev/shm/term/$k/col");
+  $new_width = Common::read_file("/dev/shm/term/$k/col");
 } elsif ($action eq 'grow') {
   $new_width = 2 * $cw;
 } elsif ($action eq 'big') {
@@ -41,9 +43,9 @@ if ($action eq 'shrink') {
 if ($new_width && $new_width != $width) {
   print "$action: $width -> $new_width\n";
   my $col;
-  my $row = read_file("/dev/shm/term/$k/row");
+  my $row = Common::read_file("/dev/shm/term/$k/row");
   if ($action eq 'shrink') {
-    $col = read_file("/dev/shm/term/$k/col");
+    $col = Common::read_file("/dev/shm/term/$k/col");
   } else {
     $col = $new_width;
   }
@@ -51,8 +53,8 @@ if ($new_width && $new_width != $width) {
   print "$cmd\n";
   qx/$cmd/;
   if ($action eq 'shrink') {
-    my $x = read_file("/dev/shm/term/$k/x");
-    my $y = read_file("/dev/shm/term/$k/y");
+    my $x = Common::read_file("/dev/shm/term/$k/x");
+    my $y = Common::read_file("/dev/shm/term/$k/y");
     $x -= 1; # xdotool is off by one
     $y -= 1;
     qx/xdotool getactivewindow windowmove -- $x $y/;

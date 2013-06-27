@@ -2,7 +2,7 @@ package WMGR;
 
 use strict;
 use warnings;
-use File::Slurp;
+use Common;
 
 my %opt;
 
@@ -19,7 +19,7 @@ sub get_config {
         return undef;
     }
 
-    my %config = eval read_file($conf_file) or die "Corrupt $conf_file? $@";
+    my %config = eval Common::read_file($conf_file) or die "Corrupt $conf_file? $@";
     return $config{$entry};
 }
 

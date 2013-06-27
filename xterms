@@ -7,7 +7,6 @@ use strict;
 use warnings;
 use Getopt::Std;
 use File::Basename;
-use File::Slurp;
 use FindBin;
 use lib "$FindBin::RealBin";
 use WMGR home => "$FindBin::RealBin";
