@@ -12,6 +12,7 @@ use lib "$FindBin::RealBin";
 use WMGR home => "$FindBin::RealBin";
 use Screen;
 use Tmux;
+use Common;
 
 my $TMP_DIR = '/dev/shm';
 my $geom = qx/xrandr | grep '\*'/;
@@ -240,7 +241,7 @@ sub update_winid {
 
     my $xwininfo = {};
     foreach my $title (@new_titles) {
-        write_file("$TMP_DIR/$title.winid", oct($winids{$title}));
+        Common::write_file("$TMP_DIR/$title.winid", oct($winids{$title}));
         save_window_geometry($winids{$title});
     }
 }
@@ -262,12 +263,12 @@ sub save_window_geometry {
     my ($k) = $term =~ /\.(.)/;
     my $dir = "/dev/shm/term/$k";
     qx/mkdir -p $dir/;
-    write_file($dir . "/w", $w);
-    write_file($dir . "/h", $h);
-    write_file($dir . "/x", $x);
-    write_file($dir . "/y", $y);
-    write_file($dir . "/row", $row);
-    write_file($dir . "/col", $col);
+    Common::write_file($dir . "/w", $w);
+    Common::write_file($dir . "/h", $h);
+    Common::write_file($dir . "/x", $x);
+    Common::write_file($dir . "/y", $y);
+    Common::write_file($dir . "/row", $row);
+    Common::write_file($dir . "/col", $col);
 }
 
 sub restart_and_exit {
