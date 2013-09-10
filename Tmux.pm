@@ -43,22 +43,15 @@ sub isDetached {
 }
 
 sub runner {
-  my ($self, $session) = @_;
-  my $tmux_arg = "-2 " . join(" ';' ",
-    "new-session -d -s $session",
-    "attach-session -t $session",
-  );
-  return "tmux-starter $tmux_arg";
+  return start(@_);
 }
-
-sub attacher {
+sub start {
   my ($self, $session) = @_;
-  my $tmux_arg = "-2 " . join(" ';' ",
-    "attach-session -t $session",
-  );
-  return $tmux_bin
-     . "-starter"
-    . " $tmux_arg";
+  my $tmux_arg = "new-session -DA -s $session";
+  return $tmux_bin . "-starter" . " $tmux_arg";
+}
+sub attacher {
+  return start(@_);
 }
 
 my %cmdHandler = (
