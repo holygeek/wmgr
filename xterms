@@ -259,9 +259,21 @@ sub save_window_geometry {
             .*-geometry.(\d+)x(\d+)
         /gxms;
 
-    print "$term $x $y $w $h $row $col\n";
+    my %item = (
+        'term name' => $term,
+        x => $x,
+        y => $y,
+        width => $w,
+        height => $h,
+        row  => $row,
+        col  => $col,
+    );
+    while (my ($k, $v) = each %item) {
+        die "Could not get $k from xwininfo for winid $id" if ! defined $v;
+    }
+
     my ($k) = $term =~ /\.(.)/;
-    my $dir = "/dev/shm/term/$k";
+    my $dir = "$TMP_DIR/term/$k";
     qx/mkdir -p $dir/;
     Common::write_file($dir . "/w", $w);
     Common::write_file($dir . "/h", $h);
