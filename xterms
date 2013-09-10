@@ -168,7 +168,7 @@ foreach my $session (@toreattach) {
     system("cd $ENV{HOME}; $cmd");
 }
 
-sleep 2; update_winid(@torun);
+sleep 2; update_winid(@torun, @toreattach);
 #`(sleep 4 && cwd=$cwd $cwd/xterms.seticons.sh )&`;
 my $wmgr_home = $FindBin::RealBin;
 `cwd=$wmgr_home $wmgr_home/xterms.seticons.sh &`;
