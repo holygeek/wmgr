@@ -47,7 +47,7 @@ sub runner {
 }
 sub start {
   my ($self, $session) = @_;
-  my $tmux_arg = "new-session -DA -s $session";
+  my $tmux_arg = "-2 new-session -DA -s $session";
   return $tmux_bin . "-starter" . " $tmux_arg";
 }
 sub attacher {
