@@ -152,6 +152,7 @@ sub toRunOrReattach {
 }
 
 foreach my $session (@torun) {
+    remove_winid_file($session);
     my $executable = $muxer->runner($session);
     my $cmd = $xterms->{$session} . " $executable &";
     my $cmd_to_print = $cmd;
@@ -160,6 +161,7 @@ foreach my $session (@torun) {
     system("cd $ENV{HOME}; $cmd");
 }
 foreach my $session (@toreattach) {
+    remove_winid_file($session);
     my $executable = $muxer->attacher($session);
     my $cmd = $xterms->{$session} . " $executable &";
     my $cmd_to_print = $cmd;
@@ -346,4 +348,22 @@ sub checkMuxerCapabilities {
     if (@errors) {
         die join("\n\t", "Missing subs in $muxer:", @errors);
     }
+}
+
+sub get_term_name_from_session_name {
+    my ($session) = @_;
+    my ($c) = $session =~ /(.)/;
+    return "term.$c";
+}
+
+sub remove_winid_file {
+    my ($session) = @_;
+    my $winid_file = get_winid_file($session);
+    unlink $winid_file if -e $winid_file;
+}
+
+sub get_winid_file {
+    my ($session) = @_;
+    my $term_name = get_term_name_from_session_name($session);
+    return "$TMP_DIR/$term_name.winid";
 }
