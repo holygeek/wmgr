@@ -152,6 +152,7 @@ sub toRunOrReattach {
     }
 }
 
+my @started;
 foreach my $session (@torun) {
     remove_winid_file($session);
     my $executable = $muxer->runner($session);
@@ -160,6 +161,7 @@ foreach my $session (@torun) {
     #$cmd_to_print =~ s/ -/ \\\n\t-/g;
     print "$cmd_to_print\n" if $verbose;
     system("cd $ENV{HOME}; $cmd");
+    push @started, $session;
 }
 foreach my $session (@toreattach) {
     remove_winid_file($session);
@@ -169,9 +171,18 @@ foreach my $session (@toreattach) {
     #$cmd_to_print =~ s/ -/ \\\n\t-/g;
     print "$cmd_to_print\n" if $verbose;
     system("cd $ENV{HOME}; $cmd");
+    push @started, $session;
 }
 
-sleep 2; update_winid(@torun, @toreattach);
+my $c = 0;
+while (! all_xterm_mapped(@started)) {
+    sleep 1;
+    $c += 1;
+    if ($c > 15) {
+        die "Timed out waiting for all xterm windows being mapped."
+    }
+}
+update_winid(@torun, @toreattach);
 #`(sleep 4 && cwd=$cwd $cwd/xterms.seticons.sh )&`;
 my $wmgr_home = $FindBin::RealBin;
 `cwd=$wmgr_home $wmgr_home/xterms.seticons.sh &`;
@@ -351,10 +362,28 @@ sub checkMuxerCapabilities {
     }
 }
 
+sub get_mapped_term_names {
+    my @mapped = `wmctrl -l` =~ /(term\..)/g;
+    return @mapped;
+}
+
 sub get_term_name_from_session_name {
     my ($session) = @_;
     my ($c) = $session =~ /(.)/;
     return "term.$c";
+}
+
+sub all_xterm_mapped {
+    my (@started) = @_;
+    my %is_mapped;
+    foreach my $term_name (get_mapped_term_names()) {
+        $is_mapped{$term_name} = 1;
+    }
+    foreach my $session (@started) {
+        my $term_name = get_term_name_from_session_name($session);
+        return 0 if ! $is_mapped{$term_name};
+    }
+    return 1;
 }
 
 sub remove_winid_file {
