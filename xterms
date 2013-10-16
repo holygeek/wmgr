@@ -13,6 +13,7 @@ use WMGR home => "$FindBin::RealBin";
 use Screen;
 use Tmux;
 use Common;
+use Time::HiRes qw/usleep/;
 
 my $TMP_DIR = '/dev/shm';
 my $geom = qx/xrandr | grep '\*'/;
@@ -176,7 +177,7 @@ foreach my $session (@toreattach) {
 
 my $c = 0;
 while (! all_xterm_mapped(@started)) {
-    sleep 1;
+    usleep 250_000;
     $c += 1;
     if ($c > 15) {
         die "Timed out waiting for all xterm windows being mapped."
