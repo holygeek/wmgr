@@ -1,0 +1,34 @@
+#!/bin/sh
+
+xbind
+[ -x $HOME/bin/warmup.local ] && $HOME/bin/warmup.local
+
+nattempt=0
+xterms_startup_delay=4
+xterms_then_sleep() {
+	nattempt=$((nattempt + 1))
+	echo "Attempt number $nattempt, starting xterm"
+	xterms
+	echo "Sleeping for $xterms_startup_delay seconds"
+	sleep $xterms_startup_delay
+}
+
+killall_xterm () {
+	echo killing all xterm
+	killall xterm
+	while pidof xterm >/dev/null
+	do
+		sleep .1
+	done
+}
+
+ntmux_sessions=11
+attempt_limit=10
+while [ `tmux list-sessions|wc -l` -ne $ntmux_sessions ]
+do
+	killall_xterm
+	xterms_then_sleep
+	[ $nattempt -gt $attempt_limit ] && 
+	{ echo More than $attempt_limit attempts; break; }
+done
+fixwinids
