@@ -1,0 +1,8 @@
+#!/bin/sh
+# browsertop - move browser windows such that their top is exactly $head_room
+head_room=8
+for winid in $(wmctrl -l|awk '/Google Chrome/ { print $1 }')
+do
+  echo wmctrl -r $winid -e 0,-1,$head_room,-1,-1
+  wmctrl -i -r $winid -e 0,-1,$head_room,-1,-1
+done
