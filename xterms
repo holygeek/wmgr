@@ -48,7 +48,7 @@ my $xterms = {};
 my ($bg, $fg) = qw/black white/;
 
 my %opts;
-getopts('b:ehlv', \%opts) or do { usage(); exit 1; };
+getopts('b:ehlrv', \%opts) or do { usage(); exit 1; };
 if (defined $opts{e}) {
     system("vim ~/wmgr/xterms.conf.pl");
     exit(0);
@@ -63,14 +63,16 @@ if (defined $opts{l}) {
     foreach my $key (sort keys %$geometries) {
         print "$key\t=> $geometries->{$key}\n";
     }
-    print "===\n";
+    exit 0;
+}
+if (defined $opts{r}) {
+    my @list = $muxer->list();
     my $fmt = "%-8s %-8s %-22s %s\n";
     printf $fmt, qw(PID NAME DATE STATE);
     foreach my $s (@list) {
         my %s = %$s;
         printf $fmt, @s{qw(pid name date status)};
     }
-    exit 0;
 }
 if (defined $opts{b}) {
     $bg = $opts{b};
@@ -202,10 +204,8 @@ NAME
     xterms - Start a bunch of terminals
 
 SYNOPSIS
-    xterms [-h]
+    xterms [-hlerv]
     xterms [-b <background color>] [session1,session2,...]
-    xterms [-l]
-    xterms [-e]
     xterms restart <options and arguments>
 
 DESCRIPTION
@@ -234,6 +234,11 @@ OPTIONS
 
     -l
        List sessions found in xterms.conf.pl
+
+    -r
+       List sessions and their status
+    -v
+       Verbose
 USAGE
 }
 
