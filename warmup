@@ -22,9 +22,13 @@ killall_xterm () {
 	done
 }
 
+count_tmux_sessions() {
+	tmux list-sessions|grep '^[a-z][a-z]*:'|wc -l
+}
+
 ntmux_sessions=11
 attempt_limit=10
-while [ `tmux list-sessions|wc -l` -ne $ntmux_sessions ]
+while [ `count_tmux_sessions` -ne $ntmux_sessions ]
 do
 	killall_xterm
 	xterms_then_sleep
