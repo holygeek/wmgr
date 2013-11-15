@@ -10,6 +10,7 @@ use File::Basename;
 use FindBin;
 use lib "$FindBin::RealBin";
 use WMGR home => "$FindBin::RealBin";
+my $wmgr_home = $FindBin::RealBin;
 use Screen;
 use Tmux;
 use Common;
@@ -187,7 +188,6 @@ while (! all_xterm_mapped(@started)) {
 }
 update_winid(@torun, @toreattach);
 #`(sleep 4 && cwd=$cwd $cwd/xterms.seticons.sh )&`;
-my $wmgr_home = $FindBin::RealBin;
 `cwd=$wmgr_home $wmgr_home/xterms.seticons.sh &`;
 
 system("if ps -ef|grep xbindkeys|grep -q -v grep; then :; else $wmgr_home/xbind; fi");
