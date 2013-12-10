@@ -1,3 +1,5 @@
+#escape ^Qq
+
 # Tell screen how to set colors. AB = background, AF = foreground
 termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
 # So that vim's t_ti and t_te works (restorescreen)
