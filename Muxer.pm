@@ -2,6 +2,9 @@ package Muxer;
 
 use strict;
 use warnings;
+use FindBin;
+use lib $FindBin::RealBin;
+use WMGR home => $FindBin::RealBin;
 
 sub new {
   my ($package) = @_;
@@ -29,6 +32,14 @@ sub status {
     };
   }
   return \%status;
+}
+
+sub cmd_num {
+  my ($self) = @_;
+
+  my $geometries = WMGR::get_config('geometries');
+  my $nentries = scalar keys %$geometries;
+  print "$nentries\n";
 }
 
 sub cmd_help {

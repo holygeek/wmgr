@@ -62,6 +62,7 @@ my %cmdHandler = (
   listall => \&cmd_list_all_windows,
   start => \&cmd_start,
   title => \&cmd_title,
+  num => \&Muxer::cmd_num,
 );
 
 sub runCmd {

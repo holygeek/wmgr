@@ -26,7 +26,7 @@ count_tmux_sessions() {
 	tmux list-sessions|grep '^[a-z][a-z]*:'|wc -l
 }
 
-ntmux_sessions=11
+ntmux_sessions=$(mux num)
 attempt_limit=10
 while [ `count_tmux_sessions` -ne $ntmux_sessions ]
 do
