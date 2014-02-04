@@ -2,4 +2,4 @@ A collection of scripts to manage a bunch of terminals.
 
 Each terminal runs a dedicated muxer (screen/tmux) session named $TERM_NAME.
 
-For there on, the shell is the limit.
+From there on, the shell is the limit.
