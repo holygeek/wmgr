@@ -9,6 +9,13 @@ use base qw/Muxer/;
 my $TMUX_HISTSIZE = 19000;
 my $tmux_bin = "tmux";
 
+my $tmux_path = `which $tmux_bin`;
+chomp $tmux_path;
+if (length $tmux_path == 0) {
+	# tmux not available
+	$tmux_bin = ": tmux";
+}
+
 sub list {
   my ($self) = @_;
   # $ tmux list-sessions
