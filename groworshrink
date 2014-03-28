@@ -8,6 +8,7 @@ use Common;
 my $cw = 84; # comfort width
 
 my $direction = $ARGV[0];
+die "No direction given" unless defined $direction;
 chomp(my $winid = qx/currwin/);
 my ($term, $geom) = qx/xwininfo -id $winid/
 		      =~ /$winid "([^"]+)".*(-geometry \S+).*/gms;
@@ -20,6 +21,8 @@ if ($direction eq 'left') {
 } elsif ($direction eq 'big') {
   $action = 'big';
 }
+die "No action for direction $direction" unless $action;
+
 my ($width, $height) = $geom =~ m/-geometry ([^x]+)x([^+-]+)/;
 # print "dir $direction term $term\n";
 # print "geom $geom width $width height $height";
