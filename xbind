@@ -6,11 +6,13 @@ if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
 	DISPLAY=:0 zenity --info --text "No dbus session bus address"
 fi
 
+rc=$HOME/wmgr/xbindkeysrc
+
 case $1 in
-  -e) vi ~/.xbindkeysrc ;;
-  -c) cat ~/.xbindkeysrc ;;
+  -e) vi $rc ;;
+  -c) cat $rc ;;
   # xbind -p 'pattern'
-  -p) grep -B 1 "$2$" ~/.xbindkeysrc ;;
+  -p) grep -B 1 "$2$" $rc ;;
   -k) killall -9 xbindkeys ;;
   *)
     if ps -C xbindkeys > /dev/null; then

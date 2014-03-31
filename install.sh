@@ -38,6 +38,7 @@ openbox_dir=~/.config/openbox
 mkdir -p $openbox_dir
 make_symlink $openbox_dir/menu.xml openbox-menu.xml
 make_symlink $openbox_dir/rc.xml openbox-rc.xml
+make_symlink $openbox_dir/environment openbox.environment
 
 # Install xterms.conf.pl
 if [ ! -f xterms.conf.pl ]; then

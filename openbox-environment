@@ -1,0 +1,2 @@
+eval $(ssh-agent)
+xbindkeys -f /home/nazri/wmgr/xbindkeysrc &
