@@ -4,6 +4,7 @@ use warnings;
 use FindBin;
 use lib "$FindBin::RealBin";
 use Common;
+use WMGR home => "$FindBin::RealBin";
 
 my $cw = 84; # comfort width
 
@@ -38,7 +39,8 @@ if ($action eq 'shrink') {
       .*.geometry.(\d+)x(\d+).*
     /gxms;
     print "root_width $root_width\n";
-  $new_width = $root_width;
+  my $W = WMGR::get_config('cellw');
+  $new_width = int($root_width / $W);
 } else {
   print "Nothing to do\n";
 }
