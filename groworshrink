@@ -18,7 +18,7 @@ my $action;
 if ($direction eq 'left') {
   $action = 'shrink';
 } elsif ($direction eq 'right') {
-  $action = 'grow';
+  $action = 'big';
 } elsif ($direction eq 'big') {
   $action = 'big';
 }
