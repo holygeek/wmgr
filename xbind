@@ -18,6 +18,6 @@ case $1 in
     if ps -C xbindkeys > /dev/null; then
       killall -9 xbindkeys
     fi
-    xbindkeys
+    xbindkeys -f $rc
     ;;
 esac
