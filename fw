@@ -33,11 +33,13 @@ EOF
 }
 
 f=
-while getopts fh opt
+quiet=
+while getopts fhq opt
 do
   case "$opt" in
     f) f=-f;;
     h) usage ; exit;;
+    q) quiet=:;;
     \?) echo Unknown option ; exit;;
   esac
 done
@@ -75,7 +77,7 @@ TERM_NAME=
 eval `cat /proc/$pid/environ|tr '\000' '\n'|grep -E '^(TERM_NAME|WINDOW|TMUX_PANE|SHLVL)='`
 if [ -n "$TERM_NAME" ]; then
   goto term.$TERM_NAME[1]
-  echo mux goto $TERM_NAME $WINDOW $TMUX_PANE
+  $quiet echo mux goto $TERM_NAME $WINDOW $TMUX_PANE
   # $WINDOW is unique to screen - it is empty in tmux
   # $TMUX_PANE is unique to tmux - it is empty in screen
   mux goto $TERM_NAME $WINDOW $TMUX_PANE
