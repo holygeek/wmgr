@@ -24,15 +24,17 @@ EOF
 }
 
 f=
+all=
 quiet=
-show_where=
-while getopts fhqw opt
+show_only=
+while getopts afhqw opt
 do
   case "$opt" in
+    a) all=t;;
     f) f=-f;;
     h) usage ; exit;;
     q) quiet=:;;
-    w) show_where=t;;
+    w) show_only=t;;
     \?) echo Unknown option ; exit;;
   esac
 done
@@ -56,15 +58,15 @@ if [ -z "$pid" ]; then
 fi
 
 case $1 in
-	  # Select the newest process
   [a-z.\]\[]*)
-    if [ -z "$show_where" ]; then
+    if [ -z "$all" ]; then
+      # Select the newest process
       pids=`pgrep $f -o "$1"`
-      if [ -z "$pid" ]; then
-	echo "$me: No such task: $1"
-      fi
     else
       pids=`pgrep $f "$1"`
+    fi
+    if [ -z "$pid" ]; then
+      echo "$me: No such task: $1"
     fi
   ;;
 esac
@@ -73,12 +75,12 @@ for pid in $(echo $pids); do
   # echo pid: $pid
   TERM_NAME=
   eval `cat /proc/$pid/environ|tr '\000' '\n'|grep -E '^(TERM_NAME|WINDOW|TMUX_PANE|SHLVL)='`
-  if [ -n "$show_where" ]; then
-    echo $TERM_NAME SHLVL=$SHLVL
-  fi
-  if [ -z "$show_where" -a -n "$TERM_NAME" ]; then
+  echo $TERM_NAME SHLVL=$SHLVL
+  if [ -n "$show_only" ]; then
+    :
+  elif [ -n "$TERM_NAME" ]; then
     goto term.$TERM_NAME[1]
-    $quiet echo mux goto $TERM_NAME $WINDOW $TMUX_PANE
+    #$quiet echo mux goto $TERM_NAME $WINDOW $TMUX_PANE
     # $WINDOW is unique to screen - it is empty in tmux
     # $TMUX_PANE is unique to tmux - it is empty in screen
     mux goto $TERM_NAME $WINDOW $TMUX_PANE
