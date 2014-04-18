@@ -2,17 +2,6 @@
 # fw - find out in which terminal vim is holding the swap file hostage
 # Created: Mon Sep 10 15:42:03 MYT 2012
 me=`basename $0`
-
-usage() {
-  echo "USAGE
-  fw [pid|command]
-
-DESCRIPTION
-  show from which term.* [pid|command] is running from.
-"
-}
-
-me=`basename $0`
 usage() {
 cat <<EOF
 NAME
