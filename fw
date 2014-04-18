@@ -75,7 +75,7 @@ for pid in $(echo $pids); do
   # echo pid: $pid
   TERM_NAME=
   eval `cat /proc/$pid/environ|tr '\000' '\n'|grep -E '^(TERM_NAME|WINDOW|TMUX_PANE|SHLVL)='`
-  echo $TERM_NAME SHLVL=$SHLVL
+  echo $TERM_NAME.$TMUX_PANE SHLVL=$SHLVL
   if [ -n "$show_only" ]; then
     :
   elif [ -n "$TERM_NAME" ]; then
