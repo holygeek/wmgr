@@ -95,7 +95,7 @@ sub cmd_dump {
     $with_scrollback = "-S -$TMUX_HISTSIZE";
   }
 
-  my $cmd = "$tmux_bin capture-pane -t $session $with_scrollback \\;"
+  my $cmd = "$tmux_bin capture-pane -J -t $session $with_scrollback \\;"
     . " show-buffer \\; delete-buffer >  $outfile";
   system($cmd);
 
