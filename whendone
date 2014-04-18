@@ -34,13 +34,14 @@ debug=
 n=0
 dry_run=
 interval=3
+verbose=:
 while getopts hi:n:v opt
 do
   case "$opt" in
     h) usage ; exit;;
     i) interval="$OPTARG";;
     n) n="$OPTARG";;
-    v) verbose=t;;
+    v) verbose=;;
     \?) echo Unknown option ; exit;;
   esac
 done
@@ -58,7 +59,9 @@ fi
 
 PROMPT_REGEX='^\$$'
 c=0
+$verbose echo -n "whendone $1 "
 while ! dump $1|grep -v '^$'|tail -1|grep -q "$PROMPT_REGEX"; do
+	$verbose echo -n .
 	c=$((c + 1))
 	if [ $n -gt 0 ]; then
 	  if [ $c -eq $n ]; then
@@ -68,4 +71,5 @@ while ! dump $1|grep -v '^$'|tail -1|grep -q "$PROMPT_REGEX"; do
 
 	sleep $interval
 done
+$verbose echo
 exit 0
