@@ -57,7 +57,7 @@ if ! mux listall|grep -q $1; then
 	exit 1;
 fi
 
-PROMPT_REGEX='^\$$'
+PROMPT_REGEX='^\$ $'
 c=0
 $verbose echo -n "whendone $1 "
 while ! dump $1|grep -v '^$'|tail -1|grep -q "$PROMPT_REGEX"; do
