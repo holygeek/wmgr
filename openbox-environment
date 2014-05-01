@@ -1,2 +1,3 @@
 eval $(ssh-agent)
-xbindkeys -f /home/nazri/wmgr/xbindkeysrc &
+xbindkeys -f $HOME/wmgr/xbindkeysrc &
+xmodmap $HOME/wmgr/xmodmap
