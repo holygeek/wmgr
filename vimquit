@@ -2,6 +2,9 @@
 # vimquit
 # Created: Wed Apr 16 09:11:46 SGT 2014
 
+n=0
 for pid in $(pidof /usr/bin/vi); do
   fw -q $pid
+  n=$((n + 1))
 done
+echo "$n vim session(s)"
