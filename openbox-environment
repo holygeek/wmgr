@@ -1,3 +1,4 @@
 eval $(ssh-agent)
 xbindkeys -f $HOME/wmgr/xbindkeysrc &
+$HOME/code/keynav/keynav &
 xmodmap $HOME/wmgr/xmodmap
