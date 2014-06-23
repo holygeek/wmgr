@@ -59,3 +59,9 @@ for c in $keys; do
     echo " x  missing xbindkeys entry for 'Alt + $c'"
   fi
 done
+
+if [ ! -d ~/code/nmcli-dmenu ]; then
+  git -C ~/code clone git@github.com:firecat53/nmcli-dmenu.git
+  ln -s ~/code/nmcli-dmenu/nmcli_dmenu .
+fi
+make_symlink ~/bin/nmcli_dmenu nmcli_dmenu
