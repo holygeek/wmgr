@@ -10,21 +10,21 @@ make_symlink() {
   target=$PWD/$2
 
   if [ -e $symlink -a ! -L $symlink ]; then
-    echo " x  not a symlink: $symlink";
+    echo " x  not a symlink: $symlink"
     return 1
-  fi;
+  fi
   if [ -L $symlink ]; then
     if [ "`readlink -e $symlink`" = "$target" ]; then
       log_installed $symlink
-      echo "✓   $symlink";
+      echo "✓   $symlink"
     else
-      echo " x  `file $symlink`";
-    fi;
+      echo " x  `file $symlink`"
+    fi
   else
     log_installed $symlink
-    echo "✓   ln -s $target $symlink";
-    ln -s $target $symlink;
-  fi;
+    echo "✓   ln -s $target $symlink"
+    ln -s $target $symlink
+  fi
 }
 
 # Symlink scripts to ~/bin
