@@ -11,7 +11,7 @@ make_symlink() {
 
   if [ -e $symlink -a ! -L $symlink ]; then
     echo " x  not a symlink: $symlink";
-    continue;
+    return 1
   fi;
   if [ -L $symlink ]; then
     if [ "`readlink -e $symlink`" = "$target" ]; then
