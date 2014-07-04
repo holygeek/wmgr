@@ -43,7 +43,7 @@
    Alt + e
 
 # gitk or git gui blame
-"goto gitk || goto 'File Viewer'"
+"goto gitk || goto Vim || goto 'File Viewer'"
    Alt + t
 
 "goto bigterm || bigterm"
