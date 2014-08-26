@@ -8,3 +8,4 @@ for pid in $(pidof /usr/bin/vi); do
   n=$((n + 1))
 done
 echo "$n vim session(s)"
+exit $n
