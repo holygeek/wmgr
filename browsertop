@@ -21,7 +21,7 @@ adjust() {
   done
 }
 
-adjust -t 3 'Chrome|Thunderbird'
+adjust -t 3 -l 2 'Chrome|Thunderbird'
 
 # Skype didn't get the memo
 adjust -t 28 'Skype'
