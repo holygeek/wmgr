@@ -1,16 +1,27 @@
 #!/bin/sh
 # browsertop - move browser windows such that their top is exactly $head_room
-adjust_top_pos() {
-  head_room=$1
-  titles=$2
+adjust() {
+  left=-1
+  top=-1
+  while getopts l:t: opt
+  do
+    case "$opt" in
+      l) left=$OPTARG;;
+      t) top=$OPTARG;;
+      \?) echo Unknown option ; exit 1;;
+    esac
+  done
+  shift $(($OPTIND -1))
+
+  titles="$1"
   for winid in $(wmctrl -l|awk "/$titles/"' { print $1 }')
   do
     #echo wmctrl -r $winid -e 0,-1,$head_room,-1,-1
-    wmctrl -i -r $winid -e 0,-1,$head_room,-1,-1
+    wmctrl -i -r $winid -e 0,$left,$top,-1,-1
   done
 }
 
-adjust_top_pos 3 'Chrome|Thunderbird'
+adjust -t 3 'Chrome|Thunderbird'
 
 # Skype didn't get the memo
-adjust_top_pos 28 'Skype'
+adjust -t 28 'Skype'
