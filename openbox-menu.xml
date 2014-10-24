@@ -6,6 +6,9 @@
                 file:///usr/share/openbox/menu.xsd">
 
 <menu id="root-menu" label="Openbox 3">
+  <item label="Satt">
+    <action name="Execute"><execute>daily</execute></action>
+  </item>
   <item label="Terminal emulator">
     <action name="Execute"><execute>x-terminal-emulator</execute></action>
   </item>
@@ -17,6 +20,9 @@
   </item>
   <item label="light">
 	  <action name="Execute"><execute>env BG=white xterms -b white</execute></action>
+  </item>
+  <item label="gmrun">
+	  <action name="Execute"><execute>gmrun</execute></action>
   </item>
   <!-- This requires the presence of the 'menu' package to work -->
   <menu id="/Debian" />
