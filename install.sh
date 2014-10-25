@@ -1,5 +1,5 @@
 #!/bin/sh
-scripts="$(find . -maxdepth 1 -type f -perm /100|sed -e 's,\./,,') common.sh"
+scripts="$(find . -maxdepth 1 -type f -perm /100 -o -name common.sh|sed -e 's,\./,,'|sort)"
 rm -f installed.txt
 log_installed() {
   echo $1 >> installed.txt
