@@ -1,0 +1,11 @@
+#!/bin/sh
+# diskage - Show age of partitions
+# Created: Sat Oct 25 10:00:56 MYT 2014
+
+mount|grep '^/dev'|awk '{print $1" "$3}'|while read partition mount_point
+do
+	partition_create_date=$(tune2fs -l $partition|grep created|awk -Fcreated: '{print $2}')
+	show_as=$(date -d "$partition_create_date" +%F\ %T)
+	age=$(age -c -s=$(date -d "$partition_create_date" +%s)|sed 's/ /./g')
+	printf '%s %s %s %s\n' $partition $mount_point "$show_as" "$age"
+done|sort -nk2|column -t
