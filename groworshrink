@@ -9,59 +9,6 @@ use WMGR home => "$FindBin::RealBin";
 my ($root_geom) = `xwininfo -root` =~ m/-geometry (.*[0-9])/;
 my ($root_width, $root_height) = split_geometry($root_geom);
 # print "root_width [$root_width] root_height [$root_height]\n"; exit 1;
-
-sub split_geometry {
-  my ($geom) = @_;
-
-  my ($width, $height, $x_neg, $offset_x, $y_neg, $offset_y) = $geom
-    =~ m/
-      ([0-9]+)x([0-9]+)  # WidthxHeight
-      ([+-])
-      ([+-]?[0-9]+) # XOFF
-      ([+-])
-      ([+-]?[0-9]+) # YOFF
-      /x;
-  my $x_rel = 'left';
-  my $y_rel = 'top';
-  if ($x_neg eq '-') {
-    $x_rel = 'right';
-  }
-  if ($y_neg eq '-') {
-    $y_rel = 'bottom';
-  }
-  return ($width, $height, int($offset_x), int($offset_y), $x_rel, $y_rel);
-}
-
-sub is_inside {
-  my ($width, $height, $offset_x, $offset_y, $x, $y) = @_;
-
-  my $X = $offset_x + $width;
-  my $Y = $offset_y + $offset_y;
-  return $x >= $offset_x && $y >= $offset_y && $x <= $X && $y <= $Y;
-}
-
-sub get_full_screen_width_at {
-  my ($x, $y) = @_;
-
-  my @xrandr = `xrandr | awk '/ connected / {print \$3}'`;
-  if (scalar @xrandr == 1) {
-      return $root_width;
-  }
-
-  print join ("\n", @xrandr)."\n";
-  foreach my $geom (@xrandr) {
-    my @geom = split_geometry($geom);
-    if (is_inside(@geom, $x, $y)) {
-      print join(' a, @geom') . "\n";
-      return $geom[0];
-    } else {
-      print "$x, $y is not inside $geom\n";
-    }
-  }
-  print "We should not reach here?\n";
-  exit 1;
-}
-
 my $cw = 84; # comfort width
 
 my $direction = $ARGV[0];
@@ -128,4 +75,56 @@ sub get_top_left_coordinate {
 
   my ($x, $y) = $corners =~ m/([+-][0-9]+)([+-][0-9]+)/;
   return (int($x), int($y));
+}
+
+sub split_geometry {
+  my ($geom) = @_;
+
+  my ($width, $height, $x_neg, $offset_x, $y_neg, $offset_y) = $geom
+    =~ m/
+      ([0-9]+)x([0-9]+)  # WidthxHeight
+      ([+-])
+      ([+-]?[0-9]+) # XOFF
+      ([+-])
+      ([+-]?[0-9]+) # YOFF
+      /x;
+  my $x_rel = 'left';
+  my $y_rel = 'top';
+  if ($x_neg eq '-') {
+    $x_rel = 'right';
+  }
+  if ($y_neg eq '-') {
+    $y_rel = 'bottom';
+  }
+  return ($width, $height, int($offset_x), int($offset_y), $x_rel, $y_rel);
+}
+
+sub is_inside {
+  my ($width, $height, $offset_x, $offset_y, $x, $y) = @_;
+
+  my $X = $offset_x + $width;
+  my $Y = $offset_y + $offset_y;
+  return $x >= $offset_x && $y >= $offset_y && $x <= $X && $y <= $Y;
+}
+
+sub get_full_screen_width_at {
+  my ($x, $y) = @_;
+
+  my @xrandr = `xrandr | awk '/ connected / {print \$3}'`;
+  if (scalar @xrandr == 1) {
+      return $root_width;
+  }
+
+  print join ("\n", @xrandr)."\n";
+  foreach my $geom (@xrandr) {
+    my @geom = split_geometry($geom);
+    if (is_inside(@geom, $x, $y)) {
+      print join(' a, @geom') . "\n";
+      return $geom[0];
+    } else {
+      print "$x, $y is not inside $geom\n";
+    }
+  }
+  print "We should not reach here?\n";
+  exit 1;
 }
