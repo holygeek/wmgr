@@ -48,7 +48,7 @@ if [ ! -f xterms.conf.pl ]; then
 fi
 
 # Check for dependencies
-for i in wmctrl xbindkeys xdotool dmenu xftmetric xclip inotifywait; do
+for i in wmctrl xbindkeys xdotool dmenu xftmetric xclip inotifywait workrave; do
   if ! which $i > /dev/null; then
     echo " x  not installed: $i"
   fi
