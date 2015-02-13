@@ -1,3 +1,4 @@
+use Data::Dumper;
 {
   my ($root_width, $root_height, $root_x, $root_y)
       = `xwininfo -root`
@@ -12,12 +13,26 @@
 	"XFTM_MAX_ADVANCE=([0-9]+);",
   );
 
-  my $font_spec = `xrdb -query`;
+  chomp(my $font_spec = `xrdb -query`);
   print STDERR "Could not get font_spec from xrdb\n" if ! $font_spec;
-  my ($faceName, $faceSize)
-    = $font_spec =~ /.*Term\*faceName:\s*([^\n]+)\n.*Term\*faceSize:\s*([^\n]+)\n/s;
-  print STDERR "Could not get faceName and/or faceSize\n"
+  my %xrdb;
+  foreach my $spec (split "\n", $font_spec) {
+    my ($class, $attr, $value) = split /[*.:]+/, $spec;
+    $value =~ s/^\s+//;
+    $value =~ s/\s+$//;
+    $xrdb{$class}{$attr} = $value;
+  }
+  #my ($faceName, $class, $faceSize)
+  #  = $font_spec =~ /.*Term\*faceName:\s*([^\n]+)\n([A-Za-z]+)Term\*faceSize:\s*([^\n]+)\n/s;
+    #print STDERR "class [$class]\n";
+    #exit 1;
+  #print Dumper \%xrdb;
+  #exit 1;
+  my $faceName = $xrdb{UXTerm}{faceName};
+  my $faceSize = $xrdb{UXTerm}{faceSize};
+  print STDERR "Could not get faceName and/or faceSize for class UXterm\n"
     if ! $faceName || ! $faceSize;
+  #  = $font_spec =~ /.*Term\*faceName:\s*([^\n]+)\n([A-Za-z]+)Term\*faceSize:\s*([^\n]+)\n/s;
 
   my $xft_metric = `xftmetric '$faceName' $faceSize`;
   my ($XFTM_ASCENT, $XFTM_DESCENT, $XFTM_HEIGHT, $XFTM_MAX_ADVANCE)
@@ -31,9 +46,11 @@
 
   # Full Width
   my $fw = int($root_width / $W);
+  my $hmargin = int($root_width % $W / 2);
 
   # Full Height
   my $fh = int($root_height / $H);
+  my $vmargin = int($root_height % $H / 2);
   # Half height
   my $hh = int($fh / 2);
 
@@ -44,7 +61,7 @@
   }
 
   # Half Width
-  my $hw = $fw/2;
+  my $hw = int($fw/2);
 
   # Head room.
   my $hr = '+' . ($root_height % $H - $bs - $bs);
@@ -53,19 +70,43 @@
   my $cw = 84;
 
   # Legroom
-  my $lr = 15;
+  my $lr = 25;
 
-  my %config = (
-  muxer => 'Tmux',
-  geometries => {
+  my $left_x = -$bs + $hmargin;
+  my $second_half = $hw*$W + $hmargin;
+
+  my $geometries_1366_768 = {
+      hilite => join('', $fw, 'x', $hh+$lop , '+', $left_x, '+', $hr),
+      lolite => join('', $fw, 'x', $hh      , '+', $left_x, '-',   0),
+      #kraken => join('', $hw, 'x', $fh      , '+', $second_half, '+', $hr),
+      #mermaid=> join('', $hw, 'x', $fh      , '+', $left_x, '+', $hr),
+      #-geometry 85x45+1920-0
+      kraken  => join('', 85, 'x', 45      , '+',  1920, '-', 0),
+      mermaid => join('', 85, 'x', 45      , '+', (1920 + 85 * $W), '-', 0),
+      full   => join('', $fw, 'x', $fh      , '+', $left_x, '+', $hr),
+      gran   => join('', $hw, 'x', $fh - $lr, '+', $left_x, '+', $hr),
+      imp    => join('', $hw, 'x', $fh - $lr, '+', $second_half, '+', $hr),
+      rtfm   => join('', $hw, 'x', $fh      , '+', $second_half, '+',  $hr),
+      shells => join('', $hw, 'x', $fh      , '+', $left_x, '-',   0),
+      vims   => join('', $hw, 'x', $fh      , '+',
+                     # Place it right next to shells
+                     $second_half, '-', 0),
+      any    => join('',
+                     # Fill up remaining space after shells and vims
+                     $hw, 'x', $fh, '+',   $second_half, '+', $hr),
+      zoo   => join('', $hw, 'x', $fh - $lr, '+', $left_x, '-', 0),
+      bee    => join('', $hw, 'x', $fh - $lr, '+', $second_half, '-', 0),
+  };
+
+  my $geometries = {
       hilite => join('', $fw - $cw, 'x', $hh+$lop , '-', -$bs, '+', $hr),
-      kraken => join('', $fw - $cw, 'x', $fh      , '-', -$bs, '+', $hr),
-      mermaid=> join('', 2 *   $cw, 'x', $fh      , '+', -$bs, '+', $hr),
+      kraken => join('', int($fw/2), 'x', $fh      , '-', -$bs, '+', $hr),
+      mermaid=> join('', int($fw/2), 'x', $fh      , '+', -$bs, '+', $hr),
       lolite => join('', $fw - $cw, 'x', $hh      , '-', -$bs, '-',   0),
       full   => join('', $fw      , 'x', $fh - $lr, '+', -$bs, '+', $hr),
       gran   => join('', $hw      , 'x', $fh - $lr, '+', -$bs, '+', $hr),
       imp    => join('', $hw      , 'x', $fh - $lr, '-', -$bs, '+', $hr),
-      rtfm   => join('', $cw      , 'x', $fh      , '-',    0, '-',   0),
+      rtfm   => join('', $hw      , 'x', $fh      , '-', -$bs ,'+', $hr),
       shells => join('', $cw      , 'x', $fh      , '+', -$bs, '-',   0),
       vims   => join('', $cw      , 'x', $fh      , '+',
                      # Place it right next to shells
@@ -73,6 +114,17 @@
       any    => join('',
                      # Fill up remaining space after shells and vims
                      $fw - $cw * 2, 'x', $fh, '-',   -1, '+', $hr),
-    }
+    };
+
+  my %config = (
+  cellh => $H,
+  cellw => $W,
+  muxer => 'Tmux',
+  geometries => $geometries_1366_768,
   );
+  if (__PACKAGE__ eq 'main') {
+	  print "ohai\n";
+	  print Dumper \%config;
+  }
+  %config;
 }
