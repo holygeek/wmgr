@@ -110,16 +110,17 @@ sub is_inside {
 sub get_full_screen_width_at {
   my ($x, $y) = @_;
 
-  my @xrandr = `xrandr | awk '/ connected / {print \$3}'`;
+  my @xrandr = `xrandr | awk '/ connected / {print}'`;
   if (scalar @xrandr == 1) {
       return $root_width;
   }
+  @xrandr = map { $_ =~ s/.*?(\d+x\d+[+-]\d+[+-]\d+).*/$1/; $_ } @xrandr;
 
-  print join ("\n", @xrandr)."\n";
+  #print "Xrandr geometries:\n\t" . join ("\t", @xrandr) . "\n" ;
   foreach my $geom (@xrandr) {
     my @geom = split_geometry($geom);
     if (is_inside(@geom, $x, $y)) {
-      print join(' a, @geom') . "\n";
+      #print join(' a, @geom') . "\n";
       return $geom[0];
     } else {
       print "$x, $y is not inside $geom\n";
