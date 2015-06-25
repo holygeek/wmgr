@@ -1,0 +1,20 @@
+#!/bin/sh
+alert() {
+	zenity --error --text "$@"
+}
+die() {
+	alert "$@"
+	exit 1
+}
+currwin=$(currwin) || die "Could not get current window id"
+text=$(xclip -o)
+if [ -z "$text" ]; then
+	die "No text to paste?"
+fi
+if [ -n "$currwin" ]; then
+	xdotool type --window "$currwin" "$text"
+	# click don't work?
+	#echo xdotool click --window "$currwin" 2
+else
+	die "Current window id is empty?"
+fi

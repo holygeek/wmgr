@@ -30,6 +30,9 @@
 #keystate_scrolllock = enable
 #keystate_capslock = enable
 
+"paste-in-current-window"
+   Alt + semicolon
+
 "fw"
    Alt + w
 
