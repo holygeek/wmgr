@@ -46,7 +46,7 @@
    Alt + e
 
 # gitk or git gui blame
-"goto gitk || goto Vim || goto 'File Viewer'"
+"goto gitk || goto Vim || goto 'File Viewer' || goto 'Developer Tools'"
    Alt + t
 
 "goto bigterm || bigterm"
@@ -134,7 +134,7 @@
 "xterms"
 	Alt + x
 
-"cycle browsers '(Google Chrom|Opera|Firefox)'"
+"cycle browsers '(Google Chrom|Opera|Firefox|Developer Tools -)'"
 	Alt + u
 
 "cycle -v others '(Google Chrom|Opera|Firefox|term\.)'"
