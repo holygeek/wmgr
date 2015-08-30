@@ -1,0 +1,28 @@
+#!/bin/sh
+# tp
+# Created: Fri Apr  3 13:28:00 MYT 2015
+me=${0##*/}
+if [ -z "$1" ]; then
+	echo "Usage: $me <on|off|toggle>
+
+Turns touchpad on or off."
+	exit 1
+fi
+
+case "$1" in
+	on)
+		synclient TouchpadOff=0
+		;;
+	off)
+		synclient TouchpadOff=1
+		;;
+	toggle)
+		state=$(synclient|awk '$1 == "TouchpadOff" {print $3}') ||
+			{ echo "$me: Error reading TouchpadOff setting"; exit 1; }
+		if [ $state -eq 0 ]; then
+			state=1
+		else
+			state=0
+		fi
+		synclient TouchpadOff=$state
+esac

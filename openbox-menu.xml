@@ -9,6 +9,9 @@
   <item label="Satt">
     <action name="Execute"><execute>daily</execute></action>
   </item>
+  <item label="Toggle Trackpad">
+    <action name="Execute"><execute>tp toggle</execute></action>
+  </item>
   <item label="Terminal emulator">
     <action name="Execute"><execute>x-terminal-emulator</execute></action>
   </item>
@@ -27,6 +30,19 @@
   <item label="gmrun">
 	  <action name="Execute"><execute>gmrun</execute></action>
   </item>
+  <item label="skype">
+	  <action name="Execute"><execute>skype</execute></action>
+  </item>
+  <item label="mail">
+	  <action name="Execute"><execute>thunderbird</execute></action>
+  </item>
+  <item label="virtualbox">
+	  <action name="Execute"><execute>virtualbox</execute></action>
+  </item>
+  <item label="vpn cisco anyconnect">
+	  <action name="Execute"><execute>/opt/cisco/anyconnect/bin/vpnui</execute></action>
+  </item>
+
   <!-- This requires the presence of the 'menu' package to work -->
   <menu id="/Debian" />
   <separator />
