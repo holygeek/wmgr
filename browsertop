@@ -1,6 +1,7 @@
 #!/bin/sh
 # browsertop - move browser windows such that their top is exactly $head_room
 adjust() {
+  # top and left from top left corner of the whole desktop
   left=-1
   top=-1
   while getopts l:t: opt
