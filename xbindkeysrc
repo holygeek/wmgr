@@ -78,6 +78,10 @@
    Alt + l
 "goto.or.error term.m"
    Alt + m
+"goto.or.error term.z"
+   Alt + z
+"goto.or.error term.b"
+   Alt + b
 
 
 "goto -f term.s"
