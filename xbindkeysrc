@@ -132,6 +132,9 @@
 "cycle term_index term\\."
 	Alt + n
 
+"cycle -m term_index term\\."
+	Mod4 + n
+
 "prevterm"
 	Alt + p
 
@@ -140,6 +143,9 @@
 
 "cycle browsers '(Google Chrom|Opera|Firefox|Developer Tools -)'"
 	Alt + u
+
+"cycle -m browsers '(Google Chrom|Opera|Firefox|Developer Tools -)'"
+	Mod4 + u
 
 "cycle -v others '(Google Chrom|Opera|Firefox|term\.)'"
 	Alt + o

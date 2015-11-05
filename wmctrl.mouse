@@ -1,0 +1,26 @@
+#!/bin/sh
+# wmctrl.mouse
+# Created: Thu Oct  8 10:05:34 MYT 2015
+
+# $ xdotool getmouselocation
+# x:1868 y:711 screen:0 window:14680777
+eval $(xdotool getmouselocation |sed -e 's/:/=/g')
+
+mouse_inside() {
+	local left top width height
+	left=$1 top=$2 width=$3 height=$4
+	if [ $left -gt $x ]; then return 1; fi
+	if [ $top -gt $y ]; then return 1; fi
+	if [ $((left + width)) -lt $x ]; then return 1; fi
+	if [ $((top + height)) -lt $y ]; then return 1; fi
+	return 0
+}
+
+# $ wmctrl -lG|head -1
+# 0x04200024  0 962  435  960  765  bear term.b
+wmctrl -lG|while read hexwinid desktop  left top width height host title
+do
+	if mouse_inside $left $top $width $height; then
+		echo "$hexwinid $desktop $top $left $width $height $host $title"
+	fi
+done

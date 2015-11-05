@@ -19,16 +19,21 @@ OPTIONS
   -h
     Show this help message
 
+  -m
+    Only cycle windows whose geometry encapsulates the mouse position
+
   -v
     Reverse match
 EOF
 }
 
 v=
-while getopts hv opt
+mouse=
+while getopts hmv opt
 do
   case "$opt" in
     h) usage ; exit;;
+    m) mouse=.mouse;;
     v) v=-v;;
     \?) echo Unknown option ; exit;;
   esac
@@ -36,7 +41,7 @@ done
 shift $(($OPTIND -1))
 
 mru_delay=5
-file_counter=/dev/shm/$1
+file_counter=/dev/shm/$1$mouse
 title="$2"
 
 if [ ! -f $file_counter ]; then
@@ -44,7 +49,8 @@ if [ ! -f $file_counter ]; then
 fi
 index=`cat $file_counter`
 index=$(($index + 1))
-n_instances=`wmctrl -l|egrep $v "$title"|wc -l`
+
+n_instances=`wmctrl$mouse -l|egrep $v "$title"|wc -l`
 if [ ! $index -lt $n_instances ]; then
 	index=0
 fi
@@ -63,5 +69,5 @@ echo $index > $file_counter
 choose=$(($index + 1))
 
 choose=$(($index + 1))
-window_id=`wmctrl -l|egrep $v "$title"|awk '{print $1}'|head -$choose|tail -1`
+window_id=`wmctrl$mouse -l|egrep $v "$title"|awk '{print $1}'|head -$choose|tail -1`
 wmctrl -i -a $window_id
