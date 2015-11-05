@@ -7,3 +7,4 @@ solarized
 installed.txt
 nohup.xterm.restart.log
 xterms.conf.pl
+startup.sh

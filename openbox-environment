@@ -2,4 +2,7 @@ eval $(ssh-agent)
 xbindkeys -f $HOME/wmgr/xbindkeysrc &
 $HOME/src/keynav/keynav &
 xmodmap $HOME/wmgr/xmodmap &
+if [ -x $HOME/wmgr/startup.sh ]; then
+	$HOME/wmgr/startup.sh &
+fi
 workrave &
