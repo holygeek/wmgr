@@ -2,7 +2,7 @@
 # Created: Tue Dec 11 13:44:43 MYT 2012
 
 lines=32
-columns=84
+columns=110
 
 eval "`xrandr|grep '\*'|awk '{print $1}'|sed -e 's/^/width=/' -e 's/x/ height=/'`; \
 	`xftmetric dejavu\ sans\ mono 14`"
