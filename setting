@@ -1,0 +1,13 @@
+#!/bin/sh
+# setting
+# Created: Fri Jan 22 07:19:40 MYT 2016
+if [ "$1" = "-l" ]; then
+	ls /usr/lib/x86_64-linux-gnu/control-center-1/panels/|sed -e 's/lib//' -e 's/.so//' -e 's/_//g'
+else
+	if [ "$1" = "audio" ]; then
+		shift
+		set sound $*
+	fi
+	echo gnome-control-center $*
+	gnome-control-center $*
+fi

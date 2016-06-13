@@ -1,0 +1,11 @@
+#!/bin/sh
+# openbox-gnome-settings-menu
+# Created: Wed Apr  6 08:09:16 MYT 2016
+
+echo "<openbox_pipe_menu>"
+for name in `setting -l`; do
+	echo "<item label=\"$name\">"
+	echo "	<action name=\"Execute\"><command>setting $name</command></action>"
+	echo "</item>"
+done
+echo "</openbox_pipe_menu>"
