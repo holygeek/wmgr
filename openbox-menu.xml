@@ -30,8 +30,8 @@
   <item label="gmrun">
 	  <action name="Execute"><execute>gmrun</execute></action>
   </item>
-  <item label="skype">
-	  <action name="Execute"><execute>skype</execute></action>
+  <item label="Chat">
+	  <action name="Execute"><execute>chat</execute></action>
   </item>
   <item label="mail">
 	  <action name="Execute"><execute>thunderbird</execute></action>
