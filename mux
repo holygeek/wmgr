@@ -7,7 +7,8 @@ use WMGR home => $FindBin::RealBin;
 use Screen;
 use Tmux;
 
-my $muxer = WMGR::get_config('muxer');
+#my $muxer = WMGR::get_config('muxer');
+my $muxer = 'Tmux';
 
 if (scalar @ARGV == 0) {
     $muxer->cmd_help();
