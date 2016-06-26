@@ -64,7 +64,11 @@ use Data::Dumper;
   my $hw = int($fw/2);
 
   # Head room.
-  my $hr = '+' . ($root_height % $H - $bs - $bs);
+  my $head = ($root_height % $H - $bs - $bs);
+  my $hr = 0;
+  if ($head > 0) {
+    $hr = '+' . $head;
+  }
 
   # Comfort Width
   my $cw = 84;
