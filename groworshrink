@@ -63,6 +63,8 @@ if ($new_width && $new_width != $width) {
     $x -= 1; # xdotool is off by one
     $y -= 1;
     qx/xdotool getactivewindow windowmove -- $x $y/;
+  } else {
+    qx/xdotool getactivewindow windowmove -- 0 $y/;
   }
 }
 
@@ -100,10 +102,12 @@ sub split_geometry {
 }
 
 sub is_inside {
-  my ($width, $height, $offset_x, $offset_y, $x, $y) = @_;
+  my ($width, $height, $offset_x, $offset_y, $x_rel, $y_rel, $x, $y) = @_;
+  #print "(width, height, offset_x, offset_y, x_rel, y_rel, x, y)\n";
+  #print "($width, $height, $offset_x, $offset_y, $x_rel, $y_rel, $x, $y)\n";
 
   my $X = $offset_x + $width;
-  my $Y = $offset_y + $offset_y;
+  my $Y = $offset_y + $height;
   return $x >= $offset_x && $y >= $offset_y && $x <= $X && $y <= $Y;
 }
 
