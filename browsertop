@@ -1,5 +1,24 @@
 #!/bin/sh
 # browsertop - move browser windows such that their top is exactly $head_room
+excludebrowser=
+while getopts bh opt
+do
+  case "$opt" in
+    b)
+      excludebrowser=true
+      ;;
+    h)
+      echo -n "Usage: $(basename $0) [-b] [-h]
+    OPTIONS
+	-b
+	     exclude browser
+	-h
+	     help
+"
+    ;;
+  esac
+done
+
 adjust() {
   # top and left from top left corner of the whole desktop
   left=-1
@@ -22,7 +41,25 @@ adjust() {
   done
 }
 
-adjust -t 3 -l 2 'Chrome|Thunderbird'
+if [ -z "$excludebrowser" ]; then
+  adjust -t 8 'Chrome|irefox'
+fi
 
-# Skype didn't get the memo
-adjust -t 28 'Skype'
+nmonitors=$(xrandr|grep -w -c connected)
+if [ "$nmonitors" -eq 2 ]; then
+  top_tbird=434 left_tbird=2166
+  top_skype=593 left_skype=3041
+  top_skypechat=700 left_skypechat=1926
+elif [ "$nmonitors" -eq 1 ]; then
+  top_tbird=54 left_tbird=116
+  top_skype=189 left_skype=1124
+  top_skypechat=108 left_skypechat=127
+else
+  echo >&2 "Don't know how to handle nmonitors '$nmonitors'"
+  exit 1
+fi
+
+adjust -t $top_tbird -l $left_tbird 'Mozilla Thunderbird'
+adjust -t $top_skype -l $left_skype '1 - Skype'
+xdotool search --name --sync 'general chat' windowsize %@ 1095 498
+adjust -t $top_skypechat -l $left_skypechat 'general chat - Skype'
