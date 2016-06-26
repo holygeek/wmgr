@@ -47,13 +47,15 @@ fi
 
 nmonitors=$(xrandr|grep -w -c connected)
 if [ "$nmonitors" -eq 2 ]; then
-  top_tbird=434 left_tbird=2166
+  top_tbird=434 left_tbird=1921
   top_skype=593 left_skype=3041
   top_skypechat=700 left_skypechat=1926
+  top_slack=505 left_slack=2165
 elif [ "$nmonitors" -eq 1 ]; then
   top_tbird=54 left_tbird=116
   top_skype=189 left_skype=1124
   top_skypechat=108 left_skypechat=127
+  top_slack=90 left_slack=500
 else
   echo >&2 "Don't know how to handle nmonitors '$nmonitors'"
   exit 1
@@ -63,3 +65,4 @@ adjust -t $top_tbird -l $left_tbird 'Mozilla Thunderbird'
 adjust -t $top_skype -l $left_skype '1 - Skype'
 xdotool search --name --sync 'general chat' windowsize %@ 1095 498
 adjust -t $top_skypechat -l $left_skypechat 'general chat - Skype'
+adjust -t $top_slack -l $left_slack 'Slack - '
