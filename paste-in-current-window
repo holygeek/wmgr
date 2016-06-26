@@ -10,6 +10,13 @@ currwin=$(currwin) || die "Could not get current window id"
 #text="$(xclip -o)"
 text="$(xclip -o|sed -e 's,\\,\\\\\\\\,g')"
 if [ -z "$text" ]; then
+	text="$(xclip -selection secondary -o|sed -e 's,\\,\\\\\\\\,g')"
+	if [ -z "$text" ]; then
+		text="$(xclip -selection clipboard -o|sed -e 's,\\,\\\\\\\\,g')"
+	fi
+fi
+
+if [ -z "$text" ]; then
 	die "No text to paste?"
 fi
 if [ -n "$currwin" ]; then
