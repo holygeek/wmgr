@@ -49,7 +49,7 @@ my $xterms = {};
 my ($bg, $fg) = qw/black white/;
 
 my %opts;
-getopts('b:ehlrv', \%opts) or do { usage(); exit 1; };
+getopts('b:ehlrvp', \%opts) or do { usage(); exit 1; };
 if (defined $opts{e}) {
     system("vim ~/wmgr/xterms.conf.pl");
     exit(0);
@@ -64,8 +64,10 @@ if (defined $opts{l}) {
     foreach my $key (sort keys %$geometries) {
         print "$key\t=> $geometries->{$key}\n";
     }
+    #all_xterm_mapped();
     exit 0;
 }
+
 if (defined $opts{r}) {
     my @list = $muxer->list();
     my $fmt = "%-8s %-8s %-22s %s\n";
@@ -111,6 +113,11 @@ foreach my $session (keys %$geometries) {
                         .  "-geometry ". $geometries->{$session} . " "
 
                         .  "-e";
+}
+
+if (defined $opts{p}) {
+    restore_positions();
+    exit 0;
 }
 
 my $muxer_status = $muxer->status();
@@ -207,6 +214,7 @@ SYNOPSIS
     xterms [-hlerv]
     xterms [-b <background color>] [session1,session2,...]
     xterms restart <options and arguments>
+    xterms -p
 
 DESCRIPTION
     xterms starts the terminals with the geometries set in the config file
@@ -235,6 +243,8 @@ OPTIONS
     -l
        List sessions found in xterms.conf.pl
 
+    -p
+       Restore xterms windows' positions
     -r
        List sessions and their status
     -v
@@ -272,8 +282,8 @@ sub save_window_geometry {
     my ($term, $x, $y, $w, $h, $col, $row)
         = $wininfo =~ /
             .*Window.id:.*0x[^ ]+\s+"([^"]+)"
-            .*Absolute.upper-left.X:\s+(\d+)
-            .*Absolute.upper-left.Y:\s+(\d+)
+            .*Absolute.upper-left.X:\s+(-?\d+)
+            .*Absolute.upper-left.Y:\s+(-?\d+)
             .*Width:\s+(\d+)
             .*Height:\s+(\d+)
             .*-geometry.(\d+)x(\d+)
@@ -383,12 +393,19 @@ sub get_term_name_from_session_name {
 sub all_xterm_mapped {
     my (@started) = @_;
     my %is_mapped;
+    my $c = 1;
     foreach my $term_name (get_mapped_term_names()) {
+        printf STDERR "$c $term_name is mapped\n";
+        $c++;
         $is_mapped{$term_name} = 1;
     }
     foreach my $session (@started) {
         my $term_name = get_term_name_from_session_name($session);
-        return 0 if ! $is_mapped{$term_name};
+        if (! $is_mapped{$term_name}) {
+            print STDERR "$c $term_name is not mapped\n";
+            $c++;
+            return 0;
+        }
     }
     return 1;
 }
@@ -403,4 +420,90 @@ sub get_winid_file {
     my ($session) = @_;
     my $term_name = get_term_name_from_session_name($session);
     return "$TMP_DIR/$term_name.winid";
+}
+
+sub get_root_geometry {
+    my $wininfo = qx/xwininfo -root/;
+    my ( $x, $y, $w, $h, $col, $row)
+        = $wininfo =~ /
+            .*Absolute.upper-left.X:\s+(-?\d+)
+            .*Absolute.upper-left.Y:\s+(-?\d+)
+            .*Width:\s+(\d+)
+            .*Height:\s+(\d+)
+            .*-geometry.(\d+)x(\d+)
+        /gxms;
+
+        return {
+            x => $x,
+            y => $y,
+            width => $w,
+            height => $h,
+            col => $col,
+            row => $row,
+        };
+}
+
+sub restore_positions {
+    my $root = get_root_geometry;
+    my $conf = WMGR::get_config();
+
+    my @session_names;
+
+    while (my ($k, $v) = each %{$conf->{geometries}}) {
+        my $title = get_term_name_from_session_name($k);
+        my ($w, $h, $x, $y) = split /[x+-]+/, $v;
+        my $width = $w * $conf->{cellw};
+        my $height = $h * $conf->{cellh};
+        push @session_names, $k;
+
+        my $pos = $v;
+        $pos =~ s/[0-9]+/./g;
+        $pos =~ s/^\.//;
+        $pos =~ s/\.$//;
+        my $mvarg;
+        if ($pos eq "x.+.+") {
+            $mvarg = "0,$x,$y,$width,$height";
+        } elsif ($pos eq "x.+.-") {
+            my $newy = $root->{height} + $y - $height;
+            $mvarg = "0,$x,$newy,$width,$height";
+            #print "FOO $k $v\n";
+            #print "geom $x $y $w $h\n";
+            #print "   TODO handle $pos newy $newy y $y \n";
+            #print "wmctrl -r $title -e 0,$x,$newy,$width,$height\n";
+        } elsif ($pos eq "x.+.++") {
+            # A TODO handle x.+.++ - mermaid 97x51+341++1
+            my $newy = $y;
+            $mvarg = "0,$x,$newy,$width,$height";
+            #die "   A TODO handle $pos - $k $v\n";
+        } elsif ($pos eq "x.-.+") {
+            die "   B TODO handle $pos\n";
+        } elsif ($pos eq "x.-.-") {
+            die "   C TODO handle $pos\n";
+        } elsif ($pos eq "x.+.+") {
+            die "   D TODO handle $pos\n";
+        } elsif ($pos eq "x.+-.-") {
+            # E TODO handle x.+-.- - shells 97x51+-1-0
+
+            # FIXME setting newx to -x is wrong - wmctrl says "value of -1 in
+            # any position is interpreted to mean that the current geometry
+            # value should not be modified."
+            my $newx = -$x;
+
+            my $newy = $root->{height} + $y - $height;
+            $mvarg = "0,$newx,$newy,$width,$height";
+            #die "   E TODO handle $pos - $k $v\n";
+        } elsif ($pos eq "x.+-.++") {
+            # F TODO handle x.+-.++ - gran 97x31+-1++1
+            my $newx = -$x;
+            $mvarg = "0,$newx,$y,$width,$height";
+            #die "   F TODO handle $pos - $k $v\n";
+        } else {
+            die "   AAACK TODO handle $pos\n";
+        }
+
+        my $cmd = "wmctrl -r $title -e $mvarg";
+        print "$cmd\n";
+        qx/$cmd/;
+    }
+    update_winid(@session_names);
 }

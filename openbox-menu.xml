@@ -18,6 +18,9 @@
   <item label="Web browser">
     <action name="Execute"><execute>x-www-browser</execute></action>
   </item>
+  <item label="xterms-restore">
+	  <action name="Execute"><execute>xterms -p</execute></action>
+  </item>
   <item label="xterms-restart">
 	  <action name="Execute"><execute>xterms restart</execute></action>
   </item>

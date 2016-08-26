@@ -20,7 +20,11 @@ sub get_config {
     }
 
     my %config = eval Common::read_file($conf_file) or die "Corrupt $conf_file? $@";
-    return $config{$entry};
+
+    if (defined $entry) {
+      return $config{$entry};
+    }
+    return \%config;
 }
 
 1;
