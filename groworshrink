@@ -103,6 +103,11 @@ sub split_geometry {
 
 sub is_inside {
   my ($width, $height, $offset_x, $offset_y, $x_rel, $y_rel, $x, $y) = @_;
+
+  # Hack (I'm lazy to find out why this seems to work)
+  if ($y < 0) { $y = 0; }
+  if ($x < 0) { $x = 0; }
+
   #print "(width, height, offset_x, offset_y, x_rel, y_rel, x, y)\n";
   #print "($width, $height, $offset_x, $offset_y, $x_rel, $y_rel, $x, $y)\n";
 
