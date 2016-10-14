@@ -20,21 +20,28 @@ do
 done
 
 adjust() {
+  local left top winid winids titles
   # top and left from top left corner of the whole desktop
   left=-1
   top=-1
-  while getopts l:t: opt
+  winids=
+  while getopts l:t:w: opt
   do
     case "$opt" in
       l) left=$OPTARG;;
       t) top=$OPTARG;;
+      w) winids=$OPTARG;;
       \?) echo Unknown option ; exit 1;;
     esac
   done
   shift $(($OPTIND -1))
 
-  titles="$1"
-  for winid in $(wmctrl -l|awk "/$titles/"' { print $1 }')
+  if [ -z "$winids" ]; then
+    titles="$1"
+    winids=$(wmctrl -l|awk "/$titles/"' { print $1 }')
+  fi
+
+  for winid in $winids
   do
     #echo wmctrl -r $winid -e 0,-1,$head_room,-1,-1
     wmctrl -i -r $winid -e 0,$left,$top,-1,-1
@@ -48,7 +55,7 @@ fi
 nmonitors=$(xrandr|grep -w -c connected)
 if [ "$nmonitors" -eq 2 ]; then
   top_tbird=434 left_tbird=1921
-  top_skype=593 left_skype=3041
+  top_skype=735 left_skype=3041
   top_skypechat=700 left_skypechat=1926
   top_slack=505 left_slack=2165
 elif [ "$nmonitors" -eq 1 ]; then
@@ -62,7 +69,27 @@ else
 fi
 
 adjust -t $top_tbird -l $left_tbird 'Mozilla Thunderbird'
-adjust -t $top_skype -l $left_skype '1 - Skype'
-xdotool search --name --sync 'general chat' windowsize %@ 1095 498
-adjust -t $top_skypechat -l $left_skypechat 'general chat - Skype'
+
+c=1
+for skype_winid in `wmctrl -l|awk '/Skype/ { print $1 }'`; do
+  case $c in
+    1)
+      adjust -t $top_skype -l $left_skype -w $skype_winid
+      ;;
+    2)
+      xdotool windowsize $skype_winid 1095 498
+      adjust -t $top_skypechat -l $left_skypechat -w $skype_winid
+      ;;
+    *)
+      echo >&2 "More than 3 skype windows? $skype_winid"
+      ;;
+  esac
+  c=$((c + 1))
+done
+wmctr
+
+#adjust -t $top_skype -l $left_skype '1 - Skype'
+#xdotool search --name --sync 'general chat' windowsize %@ 1095 498
+#adjust -t $top_skypechat -l $left_skypechat 'general chat - Skype'
+
 adjust -t $top_slack -l $left_slack 'Slack - '
