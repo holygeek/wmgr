@@ -86,7 +86,6 @@ for skype_winid in `wmctrl -l|awk '/Skype/ { print $1 }'`; do
   esac
   c=$((c + 1))
 done
-wmctr
 
 #adjust -t $top_skype -l $left_skype '1 - Skype'
 #xdotool search --name --sync 'general chat' windowsize %@ 1095 498
