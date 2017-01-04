@@ -1,0 +1,45 @@
+#!/bin/sh
+# skype-notificationd
+# Created: Mon Aug 15 09:43:52 MYT 2016
+
+pipe=$HOME/.skype.notifications
+if [ ! -p $pipe ]; then
+	mkfifo $pipe || exit 1
+fi
+
+is_currwin_title() {
+  currwin_title="$(xwininfo -id `currwin`|grep 'Window id:'|awk -F'"' '{print $2}')"
+  logger -t skype-notification "currwin_title $currwin_title"
+  case "$currwin_title" in
+    *$1*)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
+
+aosd() {
+	aosd_cat \
+	  --fade-full=1900  \
+	  --font="DeJavu Sans Mono 14" \
+	  --padding=3 \
+	  --back-color=yellow \
+	  --shadow-opacity=0 \
+	  --back-opacity=155 \
+	  --position 1 \
+	  --y-offset 0 \
+	  --x-offset 0
+	  #--y-offset +10 \
+	  #--x-offset -300
+}
+
+while true; do
+	cat $pipe|while read msg sender; do
+		msg=$(echo "$msg"|base64 -d)
+		sender=$(echo "$sender"|base64 -d)
+		if ! is_currwin_title "Skype"; then
+			echo "$msg $sender"|aosd
+		fi
+	done
+done
