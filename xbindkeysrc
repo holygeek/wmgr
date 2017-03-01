@@ -31,7 +31,7 @@
 #keystate_capslock = enable
 
 "paste-in-current-window"
-   Alt + semicolon
+   Alt + semicolon + release
 
 "fw"
    Alt + w

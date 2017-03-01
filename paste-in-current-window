@@ -7,6 +7,14 @@ die() {
 	exit 1
 }
 currwin=$(currwin) || die "Could not get current window id"
+
+wm_name=$(xprop -id "$currwin" WM_NAME)
+case "$wm_name" in
+	*\"term.*\"|*xterm*)
+		exec xdotool key shift+Insert
+		;;
+esac
+
 #text="$(xclip -o)"
 text="$(xclip -o|sed -e 's,\\,\\\\\\\\,g')"
 if [ -z "$text" ]; then
