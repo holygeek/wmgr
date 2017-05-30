@@ -7,3 +7,4 @@ if [ -x $HOME/wmgr/startup.sh ]; then
 	$HOME/wmgr/startup.sh &
 fi
 workrave &
+$HOME/bin/skype-notificationd &
