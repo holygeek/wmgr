@@ -12,6 +12,9 @@
   <item label="Toggle Trackpad">
     <action name="Execute"><execute>tp toggle</execute></action>
   </item>
+  <item label="Turn off monitor">
+    <action name="Execute"><execute>xset dpms force off</execute></action>
+  </item>
   <item label="Terminal emulator">
     <action name="Execute"><execute>x-terminal-emulator</execute></action>
   </item>
