@@ -1,0 +1,3 @@
+# Go commands to install
+golang.org/x/tools/cmd/guru
+github.com/restic/restic
