@@ -42,6 +42,9 @@ make_symlink $openbox_dir/menu.xml openbox-menu.xml
 make_symlink $openbox_dir/rc.xml openbox-rc.xml
 make_symlink $openbox_dir/environment openbox.environment
 
+mkdir -p $HOME/.config/dunst
+make_symlink $HOME/.config/dunst/dunstrc dunstrc
+
 # Install xterms.conf.pl
 if [ ! -f xterms.conf.pl ]; then
   cp -v xterms.conf.pl.sample xterms.conf.pl

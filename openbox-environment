@@ -1,3 +1,4 @@
+dunst &
 ssh-agent > $HOME/.SSH_AGENT
 . $HOME/.SSH_AGENT
 xbindkeys -f $HOME/wmgr/xbindkeysrc &
