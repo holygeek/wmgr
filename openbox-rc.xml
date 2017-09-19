@@ -39,6 +39,7 @@
   <!-- with Smart placement on a multi-monitor system, try to place new windows
        on: 'Any' - any monitor, 'Mouse' - where the mouse is, 'Active' - where
        the active window is -->
+  <primaryMonitor></primaryMonitor>
 </placement>
 
 <theme>
@@ -92,14 +93,14 @@
     <slant>normal</slant>
     <!-- 'italic' or 'normal' -->
   </font>
-  <font place="OnScreenDisplay">
-    <name>sans</name>
-    <size>10</size>
-    <!-- font size in points -->
-    <weight>bold</weight>
-    <!-- 'bold' or 'normal' -->
-    <slant>normal</slant>
-    <!-- 'italic' or 'normal' -->
+  <font place="ActiveOnScreenDisplay">
+    <name/>
+  </font>
+  <font place="InactiveOnScreenDisplay">
+    <name>Sans</name>
+    <size>8</size>
+    <weight></weight>
+    <slant></slant>
   </font>
 </theme>
 
@@ -112,7 +113,7 @@
 
        use obconf if you want to change these without having to log out
        and back in -->
-  <number>1</number>
+  <number>2</number>
   <firstdesk>1</firstdesk>
   <names>
     <!-- set names up here if you want to, like this:
@@ -153,7 +154,6 @@
   <left>0</left>
   <right>0</right>
 </margins>
-
 <dock>
   <position>TopLeft</position>
   <!-- (Top|Bottom)(Left|Right|)|Top|Bottom|Left|Right|Floating -->
@@ -280,7 +280,7 @@
       </action>
     </keybind>
 
-   <!-- Fast access to filemanager --> 
+   <!-- Fast access to filemanager -->
    <keybind key="C-A-D">
       <action name="Execute">
         <startupnotify>
@@ -302,7 +302,7 @@
       <action name="Execute">
        <execute>scrot -s</execute>
       </action>
-    </keybind> 
+    </keybind>
 
     <!-- Keybinding for Volume management -->
     <keybind key="XF86AudioRaiseVolume">
@@ -770,6 +770,9 @@
   </application>
   <application class="BigTerm">
     <decor>no</decor>
+  </application>
+  <application class="cool-retro-term">
+      <decor>no</decor>
   </application>
 </applications>
 
