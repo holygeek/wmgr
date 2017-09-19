@@ -1,0 +1,11 @@
+#!/bin/sh
+# tray
+# Created: Mon Sep 18 13:03:25 MYT 2017
+if !pidof volumeicon >/dev/null; then
+	volumeicon&
+fi
+if pidof trayer >/dev/null; then
+	killall trayer
+else
+	trayer &
+fi
