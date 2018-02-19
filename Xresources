@@ -12,3 +12,6 @@ BigTerm*color4: light sky blue
 
 XTerm*faceName: DejaVu Sans Mono
 XTerm*faceSize: 10
+
+URxvt*faceName: DejaVu Sans Mono
+URxvt*faceSize: 9
