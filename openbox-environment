@@ -7,5 +7,6 @@ xmodmap $HOME/wmgr/xmodmap &
 if [ -x $HOME/wmgr/startup.sh ]; then
 	$HOME/wmgr/startup.sh &
 fi
+xcape
 workrave &
 $HOME/bin/skype-notificationd &
