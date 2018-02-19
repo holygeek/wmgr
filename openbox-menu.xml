@@ -52,6 +52,10 @@
   <separator />
   <menu id="gnome-setting" label="Setting" execute="openbox-menu-gnome-settings"/>
 
+  <item label="System tray">
+	<action name="Execute"><execute>tray</execute></action>
+  </item>
+
   <!-- This requires the presence of the 'menu' package to work -->
   <menu id="/Debian" />
   <separator />
