@@ -9,4 +9,4 @@ if [ -x $HOME/wmgr/startup.sh ]; then
 fi
 xcape
 workrave &
-$HOME/bin/skype-notificationd &
+volumeicon &
