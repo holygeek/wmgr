@@ -7,6 +7,6 @@ xmodmap $HOME/wmgr/xmodmap &
 if [ -x $HOME/wmgr/startup.sh ]; then
 	$HOME/wmgr/startup.sh &
 fi
-xcape -e 'Control_L=Escape;Alt_L=space'
+xcape -e 'Control_L=Escape;Alt_L=space;Control_R=Return'
 workrave &
 volumeicon &
