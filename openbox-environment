@@ -3,7 +3,8 @@ ssh-agent > $HOME/.SSH_AGENT
 . $HOME/.SSH_AGENT
 xbindkeys -f $HOME/wmgr/xbindkeysrc &
 $HOME/src/keynav/keynav &
-xmodmap $HOME/wmgr/xmodmap &
+#xmodmap $HOME/wmgr/xmodmap &
+xset r rat 350 50 &
 if [ -x $HOME/wmgr/startup.sh ]; then
 	$HOME/wmgr/startup.sh &
 fi
