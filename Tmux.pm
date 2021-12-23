@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Carp;
 use Getopt::Std;
+use POSIX qw(strftime);
 use base qw/Muxer/;
 
 my $TMUX_HISTSIZE = 19000;
@@ -22,21 +23,17 @@ sub list {
   # a: 3 windows (created Thu May  9 09:54:20 2013) [156x33] (attached)
   # foobar: 1 windows (created Thu May  9 09:55:49 2013) [156x33]
 
-  my @sessions = `$tmux_bin list-sessions`;
+  my @sessions = `$tmux_bin list-sessions -F '#{session_name} #{pane_pid} #{session_windows} #{session_created} #{?session_attached,attached,detached}'`;
   my @list;
   foreach my $line (@sessions) {
     chomp $line;
-    my ($name, $date, $status) = ($line =~ m{
-        ([^:]+)
-        :\s*\d+\s*windows\s*
-        \(created\s*([^\)]+)\)\s*
-        \[\d+x\d+\](?:\ \((attached)\))?
-      }gmxs);
+    my ($name, $pid, $nwindows, $epoch, $status) = split / /, $line;
+    my $date = strftime '%a %b %d %H:%M:%S %Y', localtime $epoch;
       push @list, {
-        pid => '/nopid/',
+        pid => $pid,
         name => $name,
         date => $date,
-        status => $status || 'detached',
+        status => $status,
       };
   }
 
