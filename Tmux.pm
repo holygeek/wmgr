@@ -59,8 +59,10 @@ sub attacher {
 }
 
 my %cmdHandler = (
+  a => \&cmd_active,
   attached => \&cmd_active,
   cmd => \&cmd_cmd,
+  d => \&cmd_inactive,
   detached => \&cmd_inactive,
   dump => \&cmd_dump,
   goto => \&cmd_goto,
