@@ -88,14 +88,18 @@ sub cmd_dump {
 
   my $with_scrollback = $opt{h} || '';
   my $session = $opt{s} or croak "mux dump: No session given";
-  my $outfile = $ARGV[0] or croak "mux dump: Not outfile given for dump";
+  my $outfile = $ARGV[0]; # or croak "mux dump: Not outfile given for dump";
+  my $dst = "";
+  if ($outfile && $outfile ne '-') {
+    $dst = "> $outfile";
+  }
 
   if (length($with_scrollback) > 0) {
     $with_scrollback = "-S -$TMUX_HISTSIZE";
   }
 
   my $cmd = "$tmux_bin capture-pane -J -t $session $with_scrollback \\;"
-    . " show-buffer \\; delete-buffer >  $outfile";
+    . " show-buffer \\; delete-buffer $dst";
   system($cmd);
 
   if ($? != 0) {
